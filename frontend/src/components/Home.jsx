@@ -2,26 +2,28 @@ import React from "react";
 
 const Home = () => {
   return (
-    <div
-      className="container d-flex justify-content-center align-items-center"
-      style={{ height: "100vh" }} // Fondo blanco
-    >
-      <div
-        className="p-4 border rounded bg-white shadow"
-        style={{ maxWidth: "400px", width: "100%" }}
-      >
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
+      <div className="card p-4 p-md-5 shadow-lg text-center" style={{ maxWidth: "800px", width: "100%" }}>
         {/* Logo */}
-        <div className="text-center mb-4">
+        <div className="mb-4">
           <img
-            src="/images/logosdc.jpg" // Asegúrate de tener este logo en la carpeta adecuada
+            src="/images/logosdc.jpg" // Asegúrate de usar la ruta correcta
             alt="Logo"
-            style={{ maxWidth: "150px", width: "100%" }} // Ajusta el tamaño según necesites
+            className="img-fluid"
+            style={{ maxWidth: "200px" }}
           />
         </div>
 
-        {/* Título o mensaje de bienvenida */}
-        <h2 className="text-center mb-4">Bienvenido a la página principal</h2>
-        <p className="text-center">¡Has iniciado sesión correctamente!</p>
+        {/* Título */}
+        <h2 className="mb-4">Agenda de Trabajos</h2>
+
+        {/* Botones */}
+        <div className="d-flex flex-column flex-md-row justify-content-center gap-3">
+          <button className="btn btn-outline-secondary">Agregar Trabajos</button>
+          <button className="btn btn-outline-secondary">Amojonamientos</button>
+          <button className="btn btn-outline-secondary">Arroz topografía</button>
+          <button className="btn btn-outline-secondary">Agrimensura trámites</button>
+        </div>
       </div>
     </div>
   );
