@@ -110,7 +110,11 @@ const AgregarTrabajos = () => {
               <label htmlFor="cliente" className="form-label">
                 Cliente
               </label>
-              <input type="text" id="cliente" className="form-control" />
+              <select id="cliente" className="form-select">
+                <option>Cliente 1</option>
+                <option>Cliente 2</option>
+                <option>Cliente 3</option>
+              </select>
             </div>
             <div className="col-md-6">
               <label htmlFor="telefono" className="form-label">
