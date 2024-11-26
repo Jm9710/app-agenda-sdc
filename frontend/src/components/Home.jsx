@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
@@ -10,7 +11,7 @@ const Home = () => {
             src="/images/logosdc.jpg" // Asegúrate de usar la ruta correcta
             alt="Logo"
             className="img-fluid"
-            style={{ maxWidth: "200px" }}
+            style={{ maxWidth: "300px" }}
           />
         </div>
 
@@ -19,10 +20,10 @@ const Home = () => {
 
         {/* Botones */}
         <div className="d-flex flex-column flex-md-row justify-content-center gap-3">
-          <button className="btn btn-outline-secondary">Agregar Trabajos</button>
-          <button className="btn btn-outline-secondary">Amojonamientos</button>
-          <button className="btn btn-outline-secondary">Arroz topografía</button>
-          <button className="btn btn-outline-secondary">Agrimensura trámites</button>
+          <Link to="/agregar-trabajos" className="btn btn-outline-secondary fw-bolder p-2" >Agregar Trabajos</Link>
+          <Link to="/amojonamientos" className="btn btn-outline-secondary fw-bolder p-2" >Amojonamientos</Link>
+          <Link to="/arroz-topografia" className="btn btn-outline-secondary fw-bolder p-2" >Arroz topografía</Link>
+          <Link to="/agrimensura-tramites" className="btn btn-outline-secondary fw-bolder p-2" >Agrimensura trámites</Link>
         </div>
       </div>
     </div>
