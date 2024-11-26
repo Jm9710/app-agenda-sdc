@@ -6,6 +6,7 @@ import AgregarTrabajos from "./components/AgregarTrabajos";
 import Amojonamientos from "./components/Amojonamientos";
 import ArrozTopografia from "./components/ArrozTopografia";
 import AgrimensuraTramites from "./components/AgrimensuraTramites";
+import AgregarCliente from "./components/ModalCliente";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
       <Route path="/amojonamientos" element={<Amojonamientos />} /> {/* Ruta para agenda agrimensura */}
       <Route path="/arroz-topografia" element={<ArrozTopografia />} /> {/* Ruta para agenda arroz topografia */}
       <Route path="/agrimensura-tramites" element={<AgrimensuraTramites />} /> {/* Ruta para agenda agrimensura tramites */}
+      <Route path="/agregar-cliente" element={<AgregarCliente />} /> {/* Ruta para agrgegar cliente */}
     </Routes>
   );
 };
