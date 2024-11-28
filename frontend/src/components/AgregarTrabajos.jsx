@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ModalCliente from './ModalCliente';
+import ModalGuardarTrabajo from './ModalGuardarTrabajo'
 
 const AgregarTrabajos = () => {
 
@@ -54,8 +55,7 @@ const AgregarTrabajos = () => {
                 <option >Seleccionar planilla</option>
                 <option >Amojonamientos</option>
                 <option >Arroz topografia</option>
-                <option >Agrimensura tramites</option>
-                
+                <option >Agrimensura tramites</option>                
             </select>
           </div>
 
@@ -82,7 +82,7 @@ const AgregarTrabajos = () => {
             <input type="text" id="nombreTrabajo" className="form-control" />
           </div>
 
-          {/* Datos de ubicación */}
+          {/* Datos de ubicación Padron*/}
           <div className="row mb-3">
             <div className="col-md-4">
               <label htmlFor="manzana" className="form-label">
@@ -101,6 +101,42 @@ const AgregarTrabajos = () => {
                 Padrón
               </label>
               <input type="text" id="padron" className="form-control" />
+            </div>
+          </div>
+
+                    {/* Datos de ubicación */}
+                    <div className="row mb-3">
+            <div className="col-md-4">
+              <label htmlFor="departamento" className="form-label">
+                Selecciona el departamento
+              </label>
+              <select id="listaDepartamentos" className="form-select">
+                <option>Artigas</option>
+                <option>Canelones</option>
+                <option>Cerro Largo</option>
+                <option>Colonia</option>
+                <option>Durazno</option>
+                <option>Flores</option>
+                <option>Florida</option>
+                <option>Lavalleja</option>
+                <option>Maldonado</option>
+                <option>Montevideo</option>
+                <option>Paysandu</option>
+                <option>Río Negro</option>
+                <option>Rivera</option>
+                <option>Rocha</option>
+                <option>Salto</option>
+                <option>San Jose</option>
+                <option>Soriano</option>
+                <option>Tacuarembo</option>
+                <option>Treinta y Tres</option>
+              </select>
+            </div>
+            <div className="col-md-4">
+              <label htmlFor="solar" className="form-label">
+                Localidad
+              </label>
+              <input type="text" id="solar" className="form-control" />
             </div>
           </div>
 
@@ -151,16 +187,23 @@ const AgregarTrabajos = () => {
               rows="4"
             ></textarea>
           </div>
-
+          
           {/* Botón Guardar */}
-          <div className="text-end">
-            <button className="btn btn-success fw-bold">Guardar trabajo</button>
+          <div className="footer">
+          <button type="button"
+            className="btn btn-outline-secondary"
+            data-bs-toggle="modal"
+            data-bs-target="#modalGuardarTrabajo"
+            >
+              Guardar Trabajo
+          </button>
           </div>
         </div>
       </div>
 
         <ModalCliente isOpen={isModalOpen} onClose={handleCloseModal}/>      
-
+        <ModalGuardarTrabajo isOpen={isModalOpen} onClose={handleCloseModal}
+        />
     </div>
   );
 };
