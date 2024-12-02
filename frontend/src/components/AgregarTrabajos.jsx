@@ -111,6 +111,7 @@ const AgregarTrabajos = () => {
                 Selecciona el departamento
               </label>
               <select id="listaDepartamentos" className="form-select">
+                <option>Rocha</option>
                 <option>Artigas</option>
                 <option>Canelones</option>
                 <option>Cerro Largo</option>
@@ -124,7 +125,6 @@ const AgregarTrabajos = () => {
                 <option>Paysandu</option>
                 <option>Río Negro</option>
                 <option>Rivera</option>
-                <option>Rocha</option>
                 <option>Salto</option>
                 <option>San Jose</option>
                 <option>Soriano</option>
