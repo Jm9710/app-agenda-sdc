@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Necesario para los modales
 import { BrowserRouter } from 'react-router-dom'; // Importa BrowserRouter
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
@@ -19,4 +20,4 @@ root.render(
 // Si deseas medir el rendimiento de tu aplicación, pasa una función
 // para registrar los resultados (por ejemplo, reportWebVitals(console.log))
 // o envíalos a un endpoint de análisis. Aprende más en: https://bit.ly/CRA-vitals
-reportWebVitals();
+reportWebVitals(console.log);
