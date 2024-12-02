@@ -3,13 +3,17 @@ import { Route, Routes } from "react-router-dom";
 import Login from "./components/Login"; 
 import Home from "./components/Home"; 
 import AgregarTrabajos from "./components/AgregarTrabajos";
-import Amojonamientos from "./components/Amojonamientos";
-import ArrozTopografia from "./components/ArrozTopografia";
-import AgrimensuraTramites from "./components/AgrimensuraTramites";
+import Amojonamientos from "./components/Agrimensura/Amojonamientos";
+import ArrozTopografia from "./components/ArrozTopo/ArrozTopografia";
+import AgrimensuraTramites from "./components/AgrTr/AgrimensuraTramites";
 import AgregarCliente from "./components/ModalCliente";
 import GuardarTrabajo from "./components/ModalGuardarTrabajo"
-import EdicionAmojs from "./components/EdicionAmojs"
-import ResumenAmojs from "./components/ResumenAmojs"
+import EdicionAmojs from "./components/Agrimensura/EdicionAmojs"
+import ResumenAmojs from "./components/Agrimensura/ResumenAmojs"
+import EdicionTopo from "./components/ArrozTopo/EdicionTopo"
+import ResumenTopo from "./components/ArrozTopo/ResumenTopo"
+import EdicionAgrTr from "./components/AgrTr/EdicionAgrTr"
+import ResumenAgrTr from "./components/AgrTr/ResumenAgrTr"
 
 const App = () => {
   return (
@@ -24,6 +28,10 @@ const App = () => {
       <Route path="/guardar-trabajo" element={<GuardarTrabajo />} /> {/* Ruta para guardar trabajo*/}
       <Route path="/edicion-amojs" element={<EdicionAmojs />} /> {/* Ruta para editar amojs*/}
       <Route path="/resumen-amojs" element={<ResumenAmojs />} /> {/* Ruta para editar amojs*/}
+      <Route path="/edicion-topo" element={<EdicionTopo />} /> {/* Ruta para editar amojs*/}
+      <Route path="/resumen-topo" element={<ResumenTopo />} /> {/* Ruta para editar amojs*/}
+      <Route path="/edicion-AgrTr" element={<EdicionAgrTr/>} /> {/* Ruta para editar amojs*/}
+      <Route path="/resumen-AgrTr" element={<ResumenAgrTr/>} /> {/* Ruta para editar amojs*/}
 
     </Routes>
   );
