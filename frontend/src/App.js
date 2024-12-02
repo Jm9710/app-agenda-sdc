@@ -8,7 +8,8 @@ import ArrozTopografia from "./components/ArrozTopografia";
 import AgrimensuraTramites from "./components/AgrimensuraTramites";
 import AgregarCliente from "./components/ModalCliente";
 import GuardarTrabajo from "./components/ModalGuardarTrabajo"
-
+import EdicionAmojs from "./components/EdicionAmojs"
+import ResumenAmojs from "./components/ResumenAmojs"
 
 const App = () => {
   return (
@@ -21,6 +22,8 @@ const App = () => {
       <Route path="/agrimensura-tramites" element={<AgrimensuraTramites />} /> {/* Ruta para agenda agrimensura tramites */}
       <Route path="/agregar-cliente" element={<AgregarCliente />} /> {/* Ruta para agrgegar cliente */}
       <Route path="/guardar-trabajo" element={<GuardarTrabajo />} /> {/* Ruta para guardar trabajo*/}
+      <Route path="/edicion-amojs" element={<EdicionAmojs />} /> {/* Ruta para editar amojs*/}
+      <Route path="/resumen-amojs" element={<ResumenAmojs />} /> {/* Ruta para editar amojs*/}
 
     </Routes>
   );

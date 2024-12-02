@@ -40,7 +40,7 @@ const Amojonamientos = () => {
               fontSize: "24px",
             }}
           >
-            Progreso
+            Edicion de datos
           </h1>
             <button className="me-3" style={{background: "transparent", border: "none"}}
             onClick={toggleMenu}
@@ -66,31 +66,15 @@ const Amojonamientos = () => {
           <table className="table table-bordered table-striped text-center" style={{ width: "100%", tableLayout: "fixed" }}>
             <thead>
               <tr>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>Por hacer</th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>En progreso</th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>Por cobrar</th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>Para facturar</th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>Facturado</th>
+                <th className="bg-light text-dark" style={{ width: "350px" }}>Tablas editables</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="bg-danger text-white" style={{ width: "350px" }}>
-                  <p>Contenido aquí</p>
-                </td>
-                <td className="bg-warning text-dark" style={{ width: "350px" }}>
-                  <p>Contenido aquí</p>
-                </td>
-                <td className="bg-info text-white" style={{ width: "350px" }}>
-                  <p>Contenido aquí</p>
-                </td>
-                <td className="bg-success text-white" style={{ width: "350px" }}> 
-                  <p>Contenido aquí</p>
-                </td>
-                <td className="bg-primary text-white" style={{ width: "350px" }}>
-                  <p>Contenido aquí</p>
-                </td>
-              </tr>
+               <tr>
+                    <td className="bg-danger text-white" style={{ width: "350px" }}>
+                        <p>Contenido aquí</p>
+                    </td>
+                </tr>            
             </tbody>
           </table>
         </div>

@@ -26,6 +26,61 @@ const MenuAmojs = () => {
       >
         <li className="nav-item" style={{ marginBottom: "10px" }}>
           <Link
+            to="/Amojonamientos"
+            className="btn btn-outline-secondary"
+            style={{
+              display: "block",  // Hace que el enlace ocupe todo el espacio disponible
+              padding: "10px",  // Espaciado alrededor del texto
+              border: "none", // Bordes redondeados
+              textDecoration: "none",  // Elimina el subrayado
+              color: "#333",  // Color de texto
+              width: "100%",  // Hace que el enlace ocupe todo el ancho
+              textAlign: "center",  // Centra el texto
+            }}
+          >
+            Progreso
+          </Link>
+        </li>
+
+        <li className="nav-item" style={{ marginBottom: "10px" }}>
+          <Link
+            to="/edicion-amojs"
+            className="btn btn-outline-secondary"
+            style={{
+              display: "block",  // Hace que el enlace ocupe todo el espacio disponible
+              padding: "10px",  // Espaciado alrededor del texto
+              border: "none", // Bordes redondeados
+              textDecoration: "none",  // Elimina el subrayado
+              color: "#333",  // Color de texto
+              width: "100%",  // Hace que el enlace ocupe todo el ancho
+              textAlign: "center",  // Centra el texto
+            }}
+          >
+            Editar datos
+          </Link>
+        </li>
+
+        <li className="nav-item" style={{ marginBottom: "10px" }}>
+          <Link
+            to="/resumen-amojs"
+            className="btn btn-outline-secondary"
+            style={{
+              display: "block",  // Hace que el enlace ocupe todo el espacio disponible
+              padding: "10px",  // Espaciado alrededor del texto
+              border: "none", // Bordes redondeados
+              textDecoration: "none",  // Elimina el subrayado
+              color: "#333",  // Color de texto
+              width: "100%",  // Hace que el enlace ocupe todo el ancho
+              textAlign: "center",  // Centra el texto
+            }}
+          >
+            Resumen 
+          </Link>
+        </li>
+
+
+        <li className="nav-item" style={{ marginBottom: "10px" }}>
+          <Link
             to="/home"
             className="btn btn-outline-secondary"
             style={{
@@ -41,7 +96,6 @@ const MenuAmojs = () => {
             Menú principal
           </Link>
         </li>
-        {/* Puedes agregar más ítems al menú aquí si es necesario */}
       </ul>
     </div>
   );
