@@ -66,14 +66,20 @@ const Amojonamientos = () => {
           <table className="table table-bordered table-striped text-center" style={{ width: "100%", tableLayout: "fixed" }}>
             <thead>
               <tr>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>Tablas editables</th>
+                <th className="bg-light text-dark" style={{ width: "200px" }}>Numero de trabajo</th>
+                <th className="bg-light text-dark" style={{ width: "300px" }}>Nombre de trabajo</th>
+                <th className="bg-light text-dark" style={{ width: "250px" }}>Nombre de cliente</th>
+                <th className="bg-light text-dark" style={{ width: "100px" }}>Costo</th>
+                <th className="bg-light text-dark" style={{ width: "300px" }}>Estado del trabajo</th>
               </tr>
             </thead>
             <tbody>
                <tr>
-                    <td className="bg-danger text-white" style={{ width: "350px" }}>
-                        <p>Contenido aquí</p>
-                    </td>
+                  <td className="bg-light text-dark" style={{ width: "200px" }}></td>
+                  <td className="bg-light text-dark" style={{ width: "300px" }}></td>
+                  <td className="bg-light text-dark" style={{ width: "250px" }}></td>
+                  <td className="bg-light text-dark" style={{ width: "100px" }}></td>
+                  <td className="bg-light text-dark" style={{ width: "300px" }}></td>
                 </tr>            
             </tbody>
           </table>

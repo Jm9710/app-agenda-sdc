@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const Home = () => {
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
-      <div className="card p-4 p-md-5 shadow-lg text-center" style={{ maxWidth: "800px", width: "100%" }}>
+      <div className="card p-4 p-md-5 shadow-lg text-center" style={{ maxWidth: "900px", width: "100%" }}>
         {/* Logo */}
         <div className="mb-4">
           <img
@@ -24,7 +24,7 @@ const Home = () => {
           <Link to="/amojonamientos" className="btn btn-outline-secondary fw-bolder p-2" >Amojonamientos</Link>
           <Link to="/arroz-topografia" className="btn btn-outline-secondary fw-bolder p-2" >Arroz topografía</Link>
           <Link to="/agrimensura-tramites" className="btn btn-outline-secondary fw-bolder p-2" >Agrimensura trámites</Link>
-
+          <Link to="/Clientes" className="btn btn-outline-secondary fw-bolder p-2" >Ver clientes</Link>
         </div>
       </div>
     </div>

@@ -14,6 +14,7 @@ import EdicionTopo from "./components/ArrozTopo/EdicionTopo"
 import ResumenTopo from "./components/ArrozTopo/ResumenTopo"
 import EdicionAgrTr from "./components/AgrTr/EdicionAgrTr"
 import ResumenAgrTr from "./components/AgrTr/ResumenAgrTr"
+import Clientes from "./components/Clientes";
 
 const App = () => {
   return (
@@ -32,7 +33,7 @@ const App = () => {
       <Route path="/resumen-topo" element={<ResumenTopo />} /> {/* Ruta para editar amojs*/}
       <Route path="/edicion-AgrTr" element={<EdicionAgrTr/>} /> {/* Ruta para editar amojs*/}
       <Route path="/resumen-AgrTr" element={<ResumenAgrTr/>} /> {/* Ruta para editar amojs*/}
-
+      <Route path="/clientes" element={<Clientes/>} /> {/* Ruta para editar amojs*/}
     </Routes>
   );
 };

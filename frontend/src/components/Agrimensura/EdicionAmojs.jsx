@@ -66,14 +66,42 @@ const Amojonamientos = () => {
           <table className="table table-bordered table-striped text-center" style={{ width: "100%", tableLayout: "fixed" }}>
             <thead>
               <tr>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>Tablas editables</th>
+                <th className="bg-light text-dark" style={{width: "250px"}}>Tipo de trabajo</th>
+                <th className="bg-light text-dark" style={{width: "160px"}}>Numero de trabajo</th>
+                <th className="bg-light text-dark" style={{width: "200px"}}>Fecha de solicitud</th>
+                <th className="bg-light text-dark" style={{width: "250px"}}>Nombre de trabajo</th>
+                <th className="bg-light text-dark" style={{width: "100px"}}>Manzana</th>
+                <th className="bg-light text-dark" style={{width: "100px"}}>Solar</th>
+                <th className="bg-light text-dark" style={{width: "100px"}}>Padron</th>
+                <th className="bg-light text-dark" style={{width: "150px"}}>Departamento</th>
+                <th className="bg-light text-dark" style={{width: "150px"}}>Localidad</th>
+                <th className="bg-light text-dark" style={{width: "250px"}}>Nombre cliente</th>
+                <th className="bg-light text-dark" style={{width: "250px"}}>Telefono cliente</th>
+                <th className="bg-light text-dark" style={{width: "150px"}}>Moneda</th>
+                <th className="bg-light text-dark" style={{width: "150px"}}>Costo</th>
+                <th className="bg-light text-dark" style={{width: "150px"}}>Iva</th>
+                <th className="bg-light text-dark" style={{width: "300px"}}>Comentarios</th>
+                <th className="bg-light text-dark" style={{width: "150px"}}>Estado de trabajo</th>
               </tr>
             </thead>
             <tbody>
                <tr>
-                    <td className="bg-danger text-white" style={{ width: "350px" }}>
-                        <p>Contenido aquí</p>
-                    </td>
+                  <td className="bg-light text-dark" style={{width: "250px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "160px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "200px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "250px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "100px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "100px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "100px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "150px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "150px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "250px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "250px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "150px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "150px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "150px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "300px"}}></td>
+                  <td className="bg-light text-dark" style={{width: "150px"}}></td>
                 </tr>            
             </tbody>
           </table>
