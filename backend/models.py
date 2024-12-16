@@ -1,6 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
+from datetime import datetime
+
 
 
 db = SQLAlchemy()
@@ -94,24 +96,25 @@ class Trabajo(db.Model):
     id_trabajo = db.Column(db.Integer, primary_key=True, autoincrement=True)
     tipo_de_trabajo = db.Column(db.Integer, db.ForeignKey('tipo_trabajo.id_tipo_trabajo'))
     num_trabajo = db.Column(db.Integer, unique=True)
-    fecha_solicitud = db.Column(db.DateTime)
-    nombre_trabajo = db.Column(db.String(20))
-    manzana = db.Column(db.String(20))
-    solar = db.Column(db.String(20))
-    padron = db.Column(db.String(20))
-    departamento = db.Column(db.String(20))
-    localidad = db.Column(db.String(20))
+    fecha_solicitud = db.Column(db.DateTime, default=datetime.utcnow)
+    nombre_trabajo = db.Column(db.String(50))
+    manzana = db.Column(db.String(50))
+    solar = db.Column(db.String(50))
+    padron = db.Column(db.String(50))
+    departamento = db.Column(db.String(50))
+    localidad = db.Column(db.String(50))
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id_cliente'))
-    telefono_cliente = db.Column(db.Integer)
+    telefono_cliente = db.Column(db.String(20))
     moneda = db.Column(db.String(20))
-    costo = db.Column(db.String(10))
-    iva = db.Column(db.Boolean)
+    costo = db.Column(db.String(20))
+    iva = db.Column(db.Boolean, default=False)
     comentarios = db.Column(db.String(1000))
     estado_trabajo = db.Column(db.Integer, db.ForeignKey('estado.id_estado'))
 
-    tipo_trabajo = db.relationship("TipoTrabajo", back_populates="trabajos")
-    estado = db.relationship("Estado", back_populates="trabajos")
-    cliente = db.relationship("Cliente", back_populates="trabajos")
+    tipo_trabajo_rel = db.relationship("TipoTrabajo", back_populates="trabajos")
+    estado_rel = db.relationship("Estado", back_populates="trabajos")
+    cliente_rel = db.relationship("Cliente", back_populates="trabajos")
+
 
     def __repr__(self):
         return f'Trabajo {self.id_trabajo} {self.nombre_trabajo}'
