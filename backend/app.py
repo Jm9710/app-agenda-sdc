@@ -2,8 +2,9 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from datetime import datetime
 from admin import setup_admin
-from models import db, Usuario, Cliente, Estado, TipoTrabajo
+from models import db, Usuario, Cliente, Estado, TipoTrabajo, Trabajo
 
 
 # Inicializa Flask
@@ -19,6 +20,7 @@ CORS(app)
 db.init_app(app)
 migrate = Migrate(app, db)
 setup_admin(app)
+
 
 # Ruta de prueba
 @app.route('/', methods=['GET'])
@@ -197,6 +199,101 @@ def actualizar_tipo_de_trabajo(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"Error": str(e)}), 500
+
+@app.route('/api/trabajo', methods=['POST'])
+def crear_trabajo():
+    try:
+        data = request.json
+
+        # Verifica los campos requeridos
+        campos_requeridos = ['tipo_de_trabajo', 'num_trabajo', 'nombre_trabajo', 'cliente_id']
+        if not all(data.get(campo) for campo in campos_requeridos):
+            return jsonify({"error": "Faltan datos requeridos"}), 400
+
+        # Crea una nueva instancia de Trabajo
+        nuevo_trabajo = Trabajo(
+            tipo_de_trabajo=data.get('tipo_de_trabajo'),
+            num_trabajo=data.get('num_trabajo'),
+            fecha_solicitud=data.get('fecha_solicitud'),
+            nombre_trabajo=data.get('nombre_trabajo'),
+            manzana=data.get('manzana'),
+            solar=data.get('solar'),
+            padron=data.get('padron'),
+            departamento=data.get('departamento'),
+            localidad=data.get('localidad'),
+            cliente_id=data.get('cliente_id'),
+            telefono_cliente=data.get('telefono_cliente'),
+            moneda=data.get('moneda'),
+            costo=data.get('costo'),
+            iva=data.get('iva', False),
+            comentarios=data.get('comentarios'),
+            estado_trabajo=data.get('estado_trabajo')
+        )
+
+        db.session.add(nuevo_trabajo)
+        db.session.commit()
+        
+        return jsonify(nuevo_trabajo.serialize()), 201
+    
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error en crear_trabajo: {e}")  # Registro detallado
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/trabajos', methods=['GET'])
+def obtener_trabajos():
+    trabajos = Trabajo.query.all()
+    trabajos_serializados = [trabajo.serialize() for trabajo in trabajos]
+    return jsonify(trabajos_serializados), 200
+
+@app.route('/api/trabajos/<int:id>', methods=['PUT'])
+def actualizar_trabajo(id):
+    data = request.json
+
+    if not any(
+        key in data for key in [
+            'nombre_trabajo', 'manzana', 'solar', 'padron', 'departamento', 
+            'localidad', 'costo', 'iva', 'comentarios', 'estado_trabajo'
+        ]
+    ):
+        return jsonify({"Error": "Faltan datos requeridos"}), 400
+    
+    trabajo = Trabajo.query.get(id)
+    if not trabajo:
+        return jsonify({"Error": "Trabajo no encontrado"}), 404
+
+    # Actualización de campos
+    for key in data:
+        if hasattr(trabajo, key):
+            setattr(trabajo, key, data[key])
+
+    # Verifica que estado_trabajo exista en la tabla Estado
+    if 'estado_trabajo' in data:
+        estado_existente = Estado.query.get(data['estado_trabajo'])
+        if not estado_existente:
+            return jsonify({"Error": "Estado no válido"}), 400
+
+    try:
+        db.session.commit()
+        return jsonify(trabajo.serialize()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"Error": str(e)}), 500
+
+@app.route('/api/trabajos/<int:id>', methods=['DELETE'])
+def eliminar_trabajo(id):
+    trabajo = Trabajo.query.get(id)
+    if not trabajo:
+        return jsonify({"Error": "Trabajo no encontrado"}), 404
+    
+    try:
+        db.session.delete(trabajo)
+        db.session.commit()
+        return jsonify({"Mensaje": "Trabajo eliminado correctamente"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"Error": str(e)}), 500
+
 
 
 # Inicializa la aplicación
