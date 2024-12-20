@@ -1,7 +1,11 @@
+import os
+from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+import bcrypt
 from datetime import datetime
 from admin import setup_admin
 from models import db, Usuario, Cliente, Estado, TipoTrabajo, Trabajo
@@ -10,22 +14,28 @@ from models import db, Usuario, Cliente, Estado, TipoTrabajo, Trabajo
 # Inicializa Flask
 app = Flask(__name__)
 
+load_dotenv()
+
 # Configura la aplicación
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://bdsdcagenda_user:yUzUdvy0Aumag5DxgNPz72HQ4IRbfbN1@dpg-ctdduo0gph6c73es1sfg-a.oregon-postgres.render.com/bdsdcagenda'
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 
 # Inicializa extensiones
 CORS(app)
 db.init_app(app)
 migrate = Migrate(app, db)
 setup_admin(app)
+jwt = JWTManager(app)
 
 
 # Ruta de prueba
 @app.route('/', methods=['GET'])
 def saludo():
     return jsonify({"mensaje": "Hola desde Flask"})
+
+# Login y token
+@app.route('/api/login', methods=['POST'])
 
 # Endpoint POST para crear usuario
 @app.route('/api/usuario', methods=['POST'])
