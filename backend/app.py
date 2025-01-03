@@ -5,14 +5,20 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-import bcrypt
 from datetime import datetime
 from admin import setup_admin
 from models import db, Usuario, Cliente, Estado, TipoTrabajo, Trabajo
-
+from flask_socketio import SocketIO
+from flask_socketio import emit
+from werkzeug.security import check_password_hash
 
 # Inicializa Flask
 app = Flask(__name__)
+CORS(app)
+
+# Inicializa SocketIO
+socketio = SocketIO(app, cors_allowed_origins="*")
+
 
 load_dotenv()
 
@@ -22,7 +28,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 
 # Inicializa extensiones
-CORS(app)
 db.init_app(app)
 migrate = Migrate(app, db)
 setup_admin(app)
@@ -34,19 +39,39 @@ jwt = JWTManager(app)
 def saludo():
     return jsonify({"mensaje": "Hola desde Flask"})
 
-# Login y token
+
 @app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    nombre = data.get('nombre')
+    contrasena = data.get('contrasena')
+
+    # Buscar al usuario en la base de datos
+    usuario = Usuario.query.filter_by(nombre=nombre).first()
+
+    if usuario and usuario.contrasena == contrasena:  # Comparar contraseñas en texto plano
+        # Si la contraseña es correcta, generar el token JWT
+        token = create_access_token(identity=usuario.nombre)
+        return jsonify({"token": token}), 200
+
+    return jsonify({"error": "Usuario o contraseña incorrectos"}), 401
+    
+@app.route('/api/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    # Obtiene la identidad del usuario desde el token JWT
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
+
 
 # Endpoint POST para crear usuario
 @app.route('/api/usuario', methods=['POST'])
 def crear_usuario():
     data = request.get_json()
 
-    # Validación de datos
     if not data or not data.get('nombre') or not data.get('contrasena'):
         return jsonify({"error": "Faltan datos requeridos"}), 400
 
-    # Crear el usuario
     nuevo_usuario = Usuario(
         nombre=data['nombre'],
         contrasena=data['contrasena']
@@ -66,14 +91,14 @@ def obtener_usuarios():
     usuarios_serializados = [usuario.serialize() for usuario in usuarios]
     return jsonify(usuarios_serializados), 200
 
-#Endpoint para Clientes
-@app.route('/api/cliente', methods=['POST'])
+# Endpoint para Clientes
+@app.route('/api/clientes', methods=['POST'])
 def crear_cliente():
     data = request.json
 
     if not all(data.get(k) for k in ['nombre', 'apellido', 'cedula', 'direccion', 'telefono']):
-        return jsonify({"Error": "faltan datos requeridos"}), 400
-    
+        return jsonify({"Error": "Faltan datos requeridos"}), 400
+
     nuevo_cliente = Cliente(
         nombre=data['nombre'],
         apellido=data['apellido'],
@@ -85,6 +110,11 @@ def crear_cliente():
     try:
         db.session.add(nuevo_cliente)
         db.session.commit()
+
+        # Emitir evento de actualización de clientes
+        clientes_actualizados = [cliente.serialize() for cliente in Cliente.query.all()]
+        socketio.emit('actualizar_clientes', clientes_actualizados)
+
         return jsonify(nuevo_cliente.serialize()), 201
     except Exception as e:
         db.session.rollback()
@@ -96,33 +126,22 @@ def obtener_clientes():
     clientes_serializados = [cliente.serialize() for cliente in clientes]
     return jsonify(clientes_serializados), 200
 
-# Endpoint para actualizar un cliente
 @app.route('/api/clientes/<int:id>', methods=['PUT'])
 def actualizar_cliente(id):
     data = request.json
 
-    # Verifica si los datos requeridos están presentes
     if not data or not any(
         key in data for key in ['nombre', 'apellido', 'cedula', 'direccion', 'telefono']
     ):
         return jsonify({"Error": "Faltan datos requeridos"}), 400
 
-    # Busca el cliente por su ID
     cliente = Cliente.query.get(id)
     if not cliente:
         return jsonify({"Error": "Cliente no encontrado"}), 404
 
-    # Actualiza los campos permitidos
-    if 'nombre' in data:
-        cliente.nombre = data['nombre']
-    if 'apellido' in data:
-        cliente.apellido = data['apellido']
-    if 'cedula' in data:
-        cliente.cedula = data['cedula']
-    if 'direccion' in data:
-        cliente.direccion = data['direccion']
-    if 'telefono' in data:
-        cliente.telefono = data['telefono']
+    for key in data:
+        if hasattr(cliente, key):
+            setattr(cliente, key, data[key])
 
     try:
         db.session.commit()
@@ -131,10 +150,8 @@ def actualizar_cliente(id):
         db.session.rollback()
         return jsonify({"Error": str(e)}), 500
 
-# Endpoint para eliminar un cliente
 @app.route('/api/clientes/<int:id>', methods=['DELETE'])
 def eliminar_cliente(id):
-    # Busca el cliente por su ID
     cliente = Cliente.query.get(id)
     if not cliente:
         return jsonify({"Error": "Cliente no encontrado"}), 404
@@ -147,31 +164,24 @@ def eliminar_cliente(id):
         db.session.rollback()
         return jsonify({"Error": str(e)}), 500
 
-
-#Endpoint para estado
-
 @app.route('/api/estados', methods=['GET'])
 def obtener_estados():
     estados = Estado.query.all()
     estados_serializados = [estado.serialize() for estado in estados]
     return jsonify(estados_serializados), 200
 
-# Endpoint para actualizar estado
 @app.route('/api/estados/<int:id>', methods=['PUT'])
 def actualizar_estado(id):
-    # Obtiene el estado por su ID
     estado = Estado.query.get(id)
     if not estado:
         return jsonify({"Error": "Estado no encontrado"}), 404
 
     data = request.get_json()
 
-    # Verifica si los datos requeridos están presentes
     if not data or not data.get('nombre'):
         return jsonify({"Error": "Faltan datos requeridos"}), 400
 
     try:
-        # Actualiza el estado
         estado.nombre = data['nombre']
         db.session.commit()
         return jsonify(estado.serialize()), 200
@@ -179,30 +189,24 @@ def actualizar_estado(id):
         db.session.rollback()
         return jsonify({"Error": str(e)}), 500
 
-
-# Endpoint para tipo de trabajo
 @app.route('/api/tipo_de_trabajos', methods=['GET'])
 def obtener_tipos_de_trabajo():
     tipo_de_trabajos = TipoTrabajo.query.all()
     tipo_de_trabajos_serializados = [tipoTrabajo.serialize() for tipoTrabajo in tipo_de_trabajos]
     return jsonify(tipo_de_trabajos_serializados), 200
 
-# Endpoint para actualizar tipo de trabajo
 @app.route('/api/tipo_de_trabajos/<int:id>', methods=['PUT'])
 def actualizar_tipo_de_trabajo(id):
-    # Obtiene el tipo de trabajo por su ID
     tipo_de_trabajo = TipoTrabajo.query.get(id)
     if not tipo_de_trabajo:
         return jsonify({"Error": "Tipo de trabajo no encontrado"}), 404
 
     data = request.get_json()
 
-    # Verifica si los datos requeridos están presentes
     if not data or not data.get('nombre'):
         return jsonify({"Error": "Faltan datos requeridos"}), 400
 
     try:
-        # Actualiza el tipo de trabajo
         tipo_de_trabajo.nombre = data['nombre']
         db.session.commit()
         return jsonify(tipo_de_trabajo.serialize()), 200
@@ -215,12 +219,17 @@ def crear_trabajo():
     try:
         data = request.json
 
-        # Verifica los campos requeridos
-        campos_requeridos = ['tipo_de_trabajo', 'num_trabajo', 'nombre_trabajo', 'cliente_id']
+        print("Datos recibidos en el backend:", data) 
+
+        campos_requeridos = ['num_trabajo', 'nombre_trabajo', 'cliente_id']
         if not all(data.get(campo) for campo in campos_requeridos):
             return jsonify({"error": "Faltan datos requeridos"}), 400
+        
+        estado_por_hacer = Estado.query.filter_by(tipo_estado= "Por Hacer").first()
+        if not estado_por_hacer:
+            return jsonify ({"error": "estado 'por hacer' no encontrado en la BD"})
 
-        # Crea una nueva instancia de Trabajo
+
         nuevo_trabajo = Trabajo(
             tipo_de_trabajo=data.get('tipo_de_trabajo'),
             num_trabajo=data.get('num_trabajo'),
@@ -237,24 +246,30 @@ def crear_trabajo():
             costo=data.get('costo'),
             iva=data.get('iva', False),
             comentarios=data.get('comentarios'),
-            estado_trabajo=data.get('estado_trabajo')
+            estado_trabajo=estado_por_hacer.id_estado
         )
 
         db.session.add(nuevo_trabajo)
         db.session.commit()
-        
+
         return jsonify(nuevo_trabajo.serialize()), 201
-    
+
     except Exception as e:
         db.session.rollback()
-        print(f"Error en crear_trabajo: {e}")  # Registro detallado
+        print(f"Error en crear_trabajo: {e}")
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/trabajos', methods=['GET'])
 def obtener_trabajos():
-    trabajos = Trabajo.query.all()
-    trabajos_serializados = [trabajo.serialize() for trabajo in trabajos]
-    return jsonify(trabajos_serializados), 200
+    try:
+        trabajos = Trabajo.query.all()
+        if not trabajos:
+            return jsonify({"message": "No se encontraron trabajos"}), 404
+        trabajos_serializados = [trabajo.serialize() for trabajo in trabajos]
+        return jsonify(trabajos_serializados), 200
+    except Exception as e:
+        return jsonify({"error": "Error al obtener los trabajos", "details": str(e)}), 500
+
 
 @app.route('/api/trabajos/<int:id>', methods=['PUT'])
 def actualizar_trabajo(id):
@@ -262,22 +277,20 @@ def actualizar_trabajo(id):
 
     if not any(
         key in data for key in [
-            'nombre_trabajo', 'manzana', 'solar', 'padron', 'departamento', 
+            'nombre_trabajo', 'manzana', 'solar', 'padron', 'departamento',
             'localidad', 'costo', 'iva', 'comentarios', 'estado_trabajo'
         ]
     ):
         return jsonify({"Error": "Faltan datos requeridos"}), 400
-    
+
     trabajo = Trabajo.query.get(id)
     if not trabajo:
         return jsonify({"Error": "Trabajo no encontrado"}), 404
 
-    # Actualización de campos
     for key in data:
         if hasattr(trabajo, key):
             setattr(trabajo, key, data[key])
 
-    # Verifica que estado_trabajo exista en la tabla Estado
     if 'estado_trabajo' in data:
         estado_existente = Estado.query.get(data['estado_trabajo'])
         if not estado_existente:
@@ -295,7 +308,7 @@ def eliminar_trabajo(id):
     trabajo = Trabajo.query.get(id)
     if not trabajo:
         return jsonify({"Error": "Trabajo no encontrado"}), 404
-    
+
     try:
         db.session.delete(trabajo)
         db.session.commit()
@@ -303,14 +316,21 @@ def eliminar_trabajo(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"Error": str(e)}), 500
+    
+@app.route('/api/ultimo_numero_trabajo', methods=['GET'])
+def obtener_ultimo_numero_trabajo():
+    # Consulta el último trabajo registrado por el número de trabajo
+    ultimo_trabajo = db.session.query(Trabajo).order_by(Trabajo.num_trabajo.desc()).first()
+
+    # Si existe un trabajo, devuelve el siguiente número
+    if ultimo_trabajo:
+        siguiente_numero = ultimo_trabajo.num_trabajo + 1
+    else:
+        siguiente_numero = 1  # Si no hay trabajos, empieza desde el número 1
+
+    return jsonify({"ultimo_numero": siguiente_numero})
 
 
-
-# Inicializa la aplicación
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()  # Crea las tablas
-    app.run(debug=True)
-
-
+    socketio.run(app,host="0.0.0.0", debug=True, port=3001)
 

@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from sqlalchemy import Enum
 
 db = SQLAlchemy()
 
@@ -43,7 +44,7 @@ class Cliente(db.Model):
 
     def serialize(self):
         return {
-            "id_cliente": self.id_cliente,
+            "id": self.id_cliente,
             "nombre": self.nombre,
             "apellido": self.apellido,
             "cedula": self.cedula,
@@ -102,7 +103,11 @@ class Trabajo(db.Model):
     manzana = db.Column(db.String(50))
     solar = db.Column(db.String(50))
     padron = db.Column(db.String(50))
-    departamento = db.Column(db.String(50))
+    departamento = db.Column(Enum(
+        "Rocha", "Artigas", "Canelones", "Cerro Largo", "Colonia", "Durazno", "Flores", "Florida",
+        "Lavalleja", "Maldonado", "Montevideo", "Paysandu", "Rio negro", "Rivera", "Salto",
+        "San Jose", "Soriano", "Tacuarembo", "Treinta y Tres", name="departamento"
+    ))
     localidad = db.Column(db.String(50))
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id_cliente'))
     telefono_cliente = db.Column(db.String(15))
