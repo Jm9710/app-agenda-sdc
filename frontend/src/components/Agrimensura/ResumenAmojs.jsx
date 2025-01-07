@@ -1,24 +1,79 @@
-import React, {useState} from "react";
-import MenuAmojs from './MenuAmojs';
+import React, { useEffect, useState } from "react";
+import MenuAmojs from "./MenuAmojs";
 
 const Amojonamientos = () => {
+  const [trabajos, setTrabajos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    // Estado para controlar la visibilidad del menú
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [clientes, setClientes] = useState([]);
+  const [estados, setEstados] = useState([]);
 
-    // Función para cambiar el estado de visibilidad del menú
-    const toggleMenu = () => {
-      setIsMenuOpen(!isMenuOpen);
-    };
+  // Estado para controlar la visibilidad del menú
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Función para cambiar el estado de visibilidad del menú
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const fetchTrabajos = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/trabajos");
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log(data); // Verifica la estructura de los trabajos
+      setTrabajos(data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+  
+
+  const fetchClientes = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/clientes");
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+      setClientes(data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const fetchEstados = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/estados");
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+      setEstados(data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchTrabajos();
+    fetchClientes();
+    fetchEstados();
+  }, []);
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
       <div
         className="card p-4 p-md-2 shadow-lg text-center"
         style={{
-          width: "100%",  // Esto asegura que el contenedor ocupe todo el ancho disponible en pantalla.
-          height: "90vh", // La altura sigue siendo un porcentaje de la altura del viewport.
-          maxWidth: "1200px", // Mantiene la proporción del contenedor sin que se estire más allá de este ancho
+          width: "100%",
+          height: "90vh",
+          maxWidth: "1200px",
           borderRadius: "20px",
           overflow: "hidden",
         }}
@@ -42,47 +97,108 @@ const Amojonamientos = () => {
           >
             Resumen de datos
           </h1>
-            <button className="me-3" style={{background: "transparent", border: "none"}}
+          <button
+            className="me-3"
+            style={{ background: "transparent", border: "none" }}
             onClick={toggleMenu}
-            >          
-              <i className="fas fa-bars" style={{ fontSize: "30px",}}
-          ></i></button>
+          >
+            <i
+              className="fas fa-bars"
+              style={{
+                fontSize: "30px",
+              }}
+            ></i>
+          </button>
         </div>
 
         {/* Contenedor con scroll horizontal */}
         <div
           className="overflow-auto"
           style={{
-            maxHeight: "75vh", // Se mantiene la altura máxima para el scroll vertical si es necesario
-            overflowX: "auto", // Permite el desplazamiento horizontal si el contenido excede el contenedor
-            whiteSpace: "nowrap", // Evita que el contenido se rompa en varias líneas
+            maxHeight: "75vh",
+            overflowX: "auto",
+            whiteSpace: "nowrap",
             paddingRight: "10px",
           }}
         >
-          
           {isMenuOpen && <MenuAmojs />}
 
           {/* Tabla con contenido */}
-          <table className="table table-bordered table-striped text-center" style={{ width: "100%", tableLayout: "fixed" }}>
-            <thead>
-              <tr>
-                <th className="bg-light text-dark" style={{ width: "200px" }}>Numero de trabajo</th>
-                <th className="bg-light text-dark" style={{ width: "300px" }}>Nombre de trabajo</th>
-                <th className="bg-light text-dark" style={{ width: "250px" }}>Nombre de cliente</th>
-                <th className="bg-light text-dark" style={{ width: "100px" }}>Costo</th>
-                <th className="bg-light text-dark" style={{ width: "300px" }}>Estado del trabajo</th>
-              </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td className="bg-light text-dark" style={{ width: "200px" }}></td>
-                  <td className="bg-light text-dark" style={{ width: "300px" }}></td>
-                  <td className="bg-light text-dark" style={{ width: "250px" }}></td>
-                  <td className="bg-light text-dark" style={{ width: "100px" }}></td>
-                  <td className="bg-light text-dark" style={{ width: "300px" }}></td>
-                </tr>            
-            </tbody>
-          </table>
+          {loading ? (
+            <p> Cargando Trabajos...</p>
+          ) : error ? (
+            <p> Error: {error}</p>
+          ) : (
+            <table
+              className="table table-bordered table-striped text-center"
+              style={{ width: "100%", tableLayout: "fixed" }}
+            >
+              <thead>
+                <tr>
+                  <th className="bg-light text-dark" style={{ width: "200px" }}>
+                    Numero de trabajo
+                  </th>
+                  <th className="bg-light text-dark" style={{ width: "300px" }}>
+                    Nombre de trabajo
+                  </th>
+                  <th className="bg-light text-dark" style={{ width: "250px" }}>
+                    Nombre de cliente
+                  </th>
+                  <th className="bg-light text-dark" style={{ width: "100px" }}>
+                    Costo
+                  </th>
+                  <th className="bg-light text-dark" style={{ width: "300px" }}>
+                    Estado del trabajo
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {trabajos.filter((trabajo) => trabajo.tipo_de_trabajo === 1).map((trabajo, index) => {
+                    const cliente = clientes.find(
+                      (cl) => cl.id === trabajo.cliente_id
+                    );
+                    const estado = estados.find(
+                      (est) => est.id_estado === trabajo.estado_trabajo
+                    );
+
+                    return (
+                      <tr key={`${trabajo.id}-${index}`}>
+                        <td
+                          className="bg-light text-dark"
+                          style={{ width: "200px" }}
+                        >
+                          {trabajo.num_trabajo}
+                        </td>
+                        <td
+                          className="bg-light text-dark"
+                          style={{ width: "300px" }}
+                        >
+                          {trabajo.nombre_trabajo}
+                        </td>
+                        <td
+                          className="bg-light text-dark"
+                          style={{ width: "250px" }}
+                        >
+                          {cliente ? cliente.nombre : "Cliente no encontrado"}
+                        </td>
+                        <td
+                          className="bg-light text-dark"
+                          style={{ width: "100px" }}
+                        >
+                          {trabajo.costo}
+                        </td>
+                        <td
+                          className="bg-light text-dark"
+                          style={{ width: "300px" }}
+                        >
+                          {estado ? estado.tipo_estado : "Estado no encontrado"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>

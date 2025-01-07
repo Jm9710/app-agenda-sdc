@@ -261,15 +261,9 @@ def crear_trabajo():
 
 @app.route('/api/trabajos', methods=['GET'])
 def obtener_trabajos():
-    try:
-        trabajos = Trabajo.query.all()
-        if not trabajos:
-            return jsonify({"message": "No se encontraron trabajos"}), 404
-        trabajos_serializados = [trabajo.serialize() for trabajo in trabajos]
-        return jsonify(trabajos_serializados), 200
-    except Exception as e:
-        return jsonify({"error": "Error al obtener los trabajos", "details": str(e)}), 500
-
+    trabajos = Trabajo.query.all()
+    trabajos_serializados = [trabajo.serialize() for trabajo in trabajos]
+    return jsonify(trabajos_serializados), 200
 
 @app.route('/api/trabajos/<int:id>', methods=['PUT'])
 def actualizar_trabajo(id):

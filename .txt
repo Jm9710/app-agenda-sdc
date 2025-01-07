@@ -1,0 +1,304 @@
+if __name__ == '__main__':
+    socketio.run(app,host="0.0.0.0", debug=True, port=3001)
+
+import React, { useState, useEffect } from "react";
+import MenuAmojs from "./MenuAmojs";
+
+const Amojonamientos = () => {
+  const [trabajos, setTrabajos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [tiposDeTrabajo, setTiposDeTrabajo] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [estados, setEstados] = useState([]);
+  const [selectedTrabajo, setSelectedTrabajo] = useState(null); // Para almacenar el trabajo que se edita
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Toggle de menú
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  // Función para eliminar un trabajo
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/trabajos/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error(`Error al eliminar el trabajo`);
+      }
+      // Actualizamos el estado para reflejar el trabajo eliminado
+      setTrabajos(trabajos.filter((trabajo) => trabajo.id !== id));
+    } catch (err) {
+      setError("Error al eliminar el trabajo: " + err.message);
+    }
+  };
+
+  // Función para editar un trabajo (abre el formulario con los datos del trabajo)
+  const handleEdit = (trabajo) => {
+    setSelectedTrabajo(trabajo);
+  };
+
+  // Función para guardar los cambios de un trabajo editado
+  const handleSaveEdit = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await fetch(`http://localhost:3001/api/trabajos/${selectedTrabajo.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedTrabajo),
+      });
+      if (!response.ok) {
+        throw new Error("Error al guardar los cambios");
+      }
+      // Actualizamos la lista de trabajos con los cambios
+      const updatedTrabajos = trabajos.map((trabajo) =>
+        trabajo.id === selectedTrabajo.id ? selectedTrabajo : trabajo
+      );
+      setTrabajos(updatedTrabajos);
+      setSelectedTrabajo(null); // Cerrar el formulario de edición
+    } catch (err) {
+      setError("Error al guardar los cambios: " + err.message);
+    }
+  };
+
+  // Funciones para cargar los datos
+  const fetchTrabajos = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/trabajos");
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+      setTrabajos(data);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  const fetchClientes = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/clientes");
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+      setClientes(data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const fetchEstados = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/estados");
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+      setEstados(data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const fetchTiposDeTrabajo = async () => {
+    try {
+      const response = await fetch("http://localhost:3001/api/tipo_de_trabajos");
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      const data = await response.json();
+      setTiposDeTrabajo(data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchTiposDeTrabajo();
+    fetchTrabajos();
+    fetchClientes();
+    fetchEstados();
+  }, []);
+
+  return (
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
+      <div
+        className="card p-4 p-md-2 shadow-lg text-center"
+        style={{
+          width: "100%",
+          height: "90vh",
+          maxWidth: "1200px",
+          borderRadius: "20px",
+          overflow: "hidden",
+        }}
+      >
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <img
+            src="/images/logosdc.jpg"
+            alt="Logo SDC"
+            style={{
+              width: "100px",
+              height: "100px",
+              borderRadius: "50%",
+            }}
+          />
+          <h1
+            className="flex-grow-1 text-black text-center m-0"
+            style={{
+              fontSize: "24px",
+            }}
+          >
+            Edicion de datos
+          </h1>
+          <button
+            className="me-3"
+            style={{ background: "transparent", border: "none" }}
+            onClick={toggleMenu}
+          >
+            <i className="fas fa-bars" style={{ fontSize: "30px" }}></i>
+          </button>
+        </div>
+
+        <div
+          className="overflow-auto"
+          style={{
+            maxHeight: "75vh",
+            overflowX: "auto",
+            whiteSpace: "nowrap",
+            paddingRight: "10px",
+          }}
+        >
+          {isMenuOpen && <MenuAmojs />}
+
+          {loading ? (
+            <p> Cargando Trabajos...</p>
+          ) : error ? (
+            <p> Error: {error}</p>
+          ) : (
+            <table
+              className="table table-bordered table-striped text-center"
+              style={{ width: "100%", tableLayout: "fixed" }}
+            >
+              <thead>
+                <tr>
+                  <th className="bg-light text-dark">Tipo de trabajo</th>
+                  <th className="bg-light text-dark">Numero de trabajo</th>
+                  <th className="bg-light text-dark">Fecha de solicitud</th>
+                  <th className="bg-light text-dark">Nombre de trabajo</th>
+                  <th className="bg-light text-dark">Manzana</th>
+                  <th className="bg-light text-dark">Solar</th>
+                  <th className="bg-light text-dark">Padron</th>
+                  <th className="bg-light text-dark">Departamento</th>
+                  <th className="bg-light text-dark">Localidad</th>
+                  <th className="bg-light text-dark">Nombre cliente</th>
+                  <th className="bg-light text-dark">Telefono cliente</th>
+                  <th className="bg-light text-dark">Moneda</th>
+                  <th className="bg-light text-dark">Costo</th>
+                  <th className="bg-light text-dark">Iva</th>
+                  <th className="bg-light text-dark">Comentarios</th>
+                  <th className="bg-light text-dark">Estado de trabajo</th>
+                  <th className="bg-light text-dark">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {trabajos.map((trabajo) => {
+                  const cliente = clientes.find((cl) => cl.id === trabajo.cliente_id);
+                  const estado = estados.find((est) => est.id_estado === trabajo.estado_trabajo);
+                  const tipoTrabajo = tiposDeTrabajo.find((tipo) => tipo.id === trabajo.nombre_tipo_trabajo);
+
+                  return (
+                    <tr key={trabajo.id}>
+                      <td>{tipoTrabajo ? tipoTrabajo.nombre_tipo_trabajo : "Desconocido"}</td>
+                      <td>{trabajo.num_trabajo}</td>
+                      <td>{trabajo.fecha_solicitud}</td>
+                      <td>{trabajo.nombre_trabajo}</td>
+                      <td>{trabajo.manzana}</td>
+                      <td>{trabajo.solar}</td>
+                      <td>{trabajo.padron}</td>
+                      <td>{trabajo.departamento}</td>
+                      <td>{trabajo.localidad}</td>
+                      <td>{cliente ? cliente.nombre : "Cliente no encontrado"}</td>
+                      <td>{trabajo.telefono_cliente}</td>
+                      <td>{trabajo.moneda}</td>
+                      <td>{trabajo.costo}</td>
+                      <td>{trabajo.iva ? <i className="fas fa-check" style={{ color: "green" }}></i> : <i className="fas fa-times" style={{ color: "red" }}></i>}</td>
+                      <td>{trabajo.comentarios}</td>
+                      <td>{estado ? estado.tipo_estado : "Estado no encontrado"}</td>
+                      <td>
+                        <button onClick={() => handleEdit(trabajo)} className="btn btn-warning me-2">
+                          <i className="fas fa-edit"></i> Editar
+                        </button>
+                        <button onClick={() => handleDelete(trabajo.id)} className="btn btn-danger">
+                          <i className="fas fa-trash-alt"></i> Eliminar
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        {/* Formulario de Edición */}
+        {selectedTrabajo && (
+          <div className="modal fade show" style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Editar Trabajo</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={() => setSelectedTrabajo(null)}
+                  ></button>
+                </div>
+                <div className="modal-body">
+                  <form onSubmit={handleSaveEdit}>
+                    <div className="mb-3">
+                      <label className="form-label">Nombre de trabajo</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={selectedTrabajo.nombre_trabajo}
+                        onChange={(e) => setSelectedTrabajo({ ...selectedTrabajo, nombre_trabajo: e.target.value })}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Manzana</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={selectedTrabajo.manzana}
+                        onChange={(e) => setSelectedTrabajo({ ...selectedTrabajo, manzana: e.target.value })}
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Costo</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={selectedTrabajo.costo}
+                        onChange={(e) => setSelectedTrabajo({ ...selectedTrabajo, costo: e.target.value })}
+                      />
+                    </div>
+                    <button type="submit" className="btn btn-success">Guardar cambios</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Amojonamientos;
