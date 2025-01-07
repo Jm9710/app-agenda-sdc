@@ -265,10 +265,11 @@ def obtener_trabajos():
     trabajos_serializados = [trabajo.serialize() for trabajo in trabajos]
     return jsonify(trabajos_serializados), 200
 
-@app.route('/api/trabajos/<int:id>', methods=['PUT'])
-def actualizar_trabajo(id):
+@app.route('/api/trabajos/<int:id_trabajo>', methods=['PUT'])
+def actualizar_trabajo(id_trabajo):
     data = request.json
 
+    # Verifica si los datos requeridos están en la solicitud
     if not any(
         key in data for key in [
             'nombre_trabajo', 'manzana', 'solar', 'padron', 'departamento',
@@ -277,25 +278,30 @@ def actualizar_trabajo(id):
     ):
         return jsonify({"Error": "Faltan datos requeridos"}), 400
 
-    trabajo = Trabajo.query.get(id)
+    # Buscar el trabajo por id_trabajo
+    trabajo = Trabajo.query.get(id_trabajo)
     if not trabajo:
         return jsonify({"Error": "Trabajo no encontrado"}), 404
 
+    # Actualizar los campos del trabajo
     for key in data:
         if hasattr(trabajo, key):
             setattr(trabajo, key, data[key])
 
+    # Verificar si el estado del trabajo es válido
     if 'estado_trabajo' in data:
         estado_existente = Estado.query.get(data['estado_trabajo'])
         if not estado_existente:
             return jsonify({"Error": "Estado no válido"}), 400
 
+    # Guardar cambios en la base de datos
     try:
         db.session.commit()
         return jsonify(trabajo.serialize()), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"Error": str(e)}), 500
+
 
 @app.route('/api/trabajos/<int:id>', methods=['DELETE'])
 def eliminar_trabajo(id):

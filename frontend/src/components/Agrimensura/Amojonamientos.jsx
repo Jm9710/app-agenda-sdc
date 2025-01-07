@@ -18,7 +18,11 @@ const Amojonamientos = () => {
         throw new Error(`Error HTTP: ${response.status}`);
       }
       const data = await response.json();
-      setTrabajos(data);
+
+      // Filtrar los trabajos que tienen tipo_trabajo === 1
+      const trabajosFiltrados = data.filter(trabajo => trabajo.tipo_de_trabajo === 1);
+      setTrabajos(trabajosFiltrados);
+
       setLoading(false);
     } catch (err) {
       setError(err.message);
@@ -64,7 +68,10 @@ const Amojonamientos = () => {
               borderRadius: "50%",
             }}
           />
-          <h1 className="flex-grow-1 text-black text-center m-0" style={{ fontSize: "24px" }}>
+          <h1
+            className="flex-grow-1 text-black text-center m-0"
+            style={{ fontSize: "24px" }}
+          >
             Progreso
           </h1>
           <button
@@ -88,16 +95,26 @@ const Amojonamientos = () => {
           }}
         >
           <table
-            className="table table-bordered  text-center"
+            className="table table-bordered text-center"
             style={{ width: "100%", tableLayout: "fixed" }}
           >
             <thead>
               <tr>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>Por hacer</th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>En progreso</th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>Por cobrar</th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>Para facturar</th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>Facturado</th>
+                <th className="bg-light text-dark" style={{ width: "350px" }}>
+                  Por hacer
+                </th>
+                <th className="bg-light text-dark" style={{ width: "350px" }}>
+                  En progreso
+                </th>
+                <th className="bg-light text-dark" style={{ width: "350px" }}>
+                  Por cobrar
+                </th>
+                <th className="bg-light text-dark" style={{ width: "350px" }}>
+                  Para facturar
+                </th>
+                <th className="bg-light text-dark" style={{ width: "350px" }}>
+                  Facturado
+                </th>
               </tr>
             </thead>
             <tbody>

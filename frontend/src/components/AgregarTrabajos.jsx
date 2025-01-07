@@ -84,8 +84,6 @@ const AgregarTrabajos = () => {
     setSelectedPlanilla(e.target.value);
   };
 
-
-
   const handleClienteChange = (e) => {
     const id = e.target.value;
     setCliente(id);
@@ -111,9 +109,16 @@ const AgregarTrabajos = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
-  
+
     // Verificar campos requeridos
-    if (!numTrabajo || !nomTrabajo || !costo || !cliente || !fechaSol || !selectedPlanilla) {
+    if (
+      !numTrabajo ||
+      !nomTrabajo ||
+      !costo ||
+      !cliente ||
+      !fechaSol ||
+      !selectedPlanilla
+    ) {
       setError("Por favor, complete todos los campos requeridos.");
       console.log("Campos faltantes:", {
         numTrabajo,
@@ -121,26 +126,26 @@ const AgregarTrabajos = () => {
         costo,
         cliente,
         fechaSol,
-        selectedPlanilla
+        selectedPlanilla,
       });
       setLoading(false);
       return;
     }
-  
+
     try {
       // Asegúrate de obtener el ID de la planilla seleccionada
       const selectedTipoDeTrabajo = planillas.find(
         (planilla) => planilla.id_tipo_trabajo === parseInt(selectedPlanilla)
       );
-  
+
       if (!selectedTipoDeTrabajo) {
         setError("Selecciona un tipo de trabajo válido.");
         setLoading(false);
         return;
       }
-  
+
       const requestData = {
-        tipo_de_trabajo: selectedTipoDeTrabajo.id_tipo_trabajo,  // Aquí cambiamos para enviar el ID
+        tipo_de_trabajo: selectedTipoDeTrabajo.id_tipo_trabajo, // Aquí cambiamos para enviar el ID
         num_trabajo: numTrabajo,
         fecha_solicitud: fechaSol,
         nombre_trabajo: nomTrabajo,
@@ -156,9 +161,9 @@ const AgregarTrabajos = () => {
         iva,
         comentarios,
       };
-  
+
       console.log("Datos preparados para enviar:", requestData);
-  
+
       const response = await fetch("http://localhost:3001/api/trabajo", {
         method: "POST",
         headers: {
@@ -166,12 +171,26 @@ const AgregarTrabajos = () => {
         },
         body: JSON.stringify(requestData),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         console.log("Trabajo creado con éxito:", data);
         alert("Trabajo agregado con éxito");
+        setFechaSol("");
+        setNomTrabajo("");
+        setManzana("");
+        setSolar("");
+        setPadron("");
+        setDepto("");
+        setLocalidad("");
+        setCliente("");
+        setTelefono("");
+        setMoneda("");
+        setCosto("");
+        setIva(false);
+        setComentarios("");
+        setSelectedPlanilla("");
       } else {
         console.error("Error del servidor:", data);
         setError(data.error || "Hubo un problema al crear el trabajo");
@@ -183,8 +202,6 @@ const AgregarTrabajos = () => {
       setLoading(false);
     }
   };
-  
-  
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">

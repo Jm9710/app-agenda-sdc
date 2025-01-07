@@ -302,3 +302,71 @@ const Amojonamientos = () => {
 };
 
 export default Amojonamientos;
+
+
+editarTrabajo: async (id, trabajoEditado) => {
+  const store = getStore();
+  if (!store.token) {
+    console.error("No se puede editar un trabajo sin autenticación");
+    return;
+  }
+
+  try {
+    const resp = await fetch(`/api/trabajos/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${store.token}`,
+      },
+      body: JSON.stringify(trabajoEditado),
+    });
+
+    if (!resp.ok) {
+      console.error("Error al editar trabajo");
+      return;
+    }
+
+    const data = await resp.json();
+    setStore({
+      trabajos: store.trabajos.map((trabajo) =>
+        trabajo.id_trabajo === id ? data : trabajo
+      ),
+      mensaje: "Trabajo editado exitosamente",
+    });
+    console.log("Trabajo editado exitosamente");
+  } catch (error) {
+    console.error("Error en la conexión al servidor:", error);
+  }
+},
+
+eliminarTrabajo: async (id) => {
+  const store = getStore();
+  if (!store.token) {
+    console.error("No se puede eliminar un trabajo sin autenticación");
+    return;
+  }
+
+  try {
+    const resp = await fetch(`/api/trabajos/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${store.token}`,
+      },
+    });
+
+    if (!resp.ok) {
+      console.error("Error al eliminar trabajo");
+      return;
+    }
+
+    setStore({
+      trabajos: store.trabajos.filter(
+        (trabajo) => trabajo.id_trabajo !== id
+      ),
+      mensaje: "Trabajo eliminado exitosamente",
+    });
+    console.log("Trabajo eliminado exitosamente");
+  } catch (error) {
+    console.error("Error en la conexión al servidor:", error);
+  }
+},

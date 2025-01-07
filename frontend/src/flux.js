@@ -204,6 +204,72 @@ const getState = (helpers) => {
         }
       },
 
+      editarTrabajo: async (id, trabajoEditado) => {
+        const store = getStore();
+        if (!store.token) {
+          console.error("No se puede editar un trabajo sin autenticacion");
+          return;
+        }
+
+        try {
+          const resp = await fetch(`/api/trabajos/${id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${store.token}`,
+            },
+            body: JSON.stringify(trabajoEditado)
+          });
+
+          if (!resp.ok) {
+            console.error("Error al editar el trabajo");
+            return
+          }
+
+          const data = await resp.json();
+          setStore({
+            trabajos: store.trabajos.map((trabajo) =>
+              trabajo.id_trabajo === id ? data : trabajo
+            ),
+            mensaje: "Trabajo editado exitosamente",
+          });
+          console.log("Trabajo editado exitosamente");
+        } catch (error) {
+          console.error("Error en la conexion al servidor:", error);
+        }
+      },
+
+      eliminarTrabajo: async (id) => {
+        const store = getStore();
+        if (!store.token) {
+          console.error("No se puede eliminar un trabajo sin autenticacion");
+          return;
+        }
+
+        try {
+          const resp = await fetch(`/api/trabajos/${id}`,{
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${store.token}`,
+            },
+          });
+
+          if (!resp.ok) {
+            console.error("Error al eliminar un trabajo");
+            return;
+          }
+          setStore({
+            trabajos: store.trabajos.filter(
+              (trabajo) => trabajo.id_trabajo !== id
+            ),
+            mensaje: "Trabajo eliminado exitosamente",
+          });
+          console.log("Trabajo Eliminado exitosamente");
+        } catch (error) {
+          console.error("Error en la conexion al servidor:", error);
+        }
+      },
+
       filterTrabajoPorTipo: (tipoId) => {
         const store = getStore();
         const trabajosFiltrados = store.trabajos.filter(
