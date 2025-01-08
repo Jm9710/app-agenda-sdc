@@ -26,7 +26,7 @@ const MenuAgrTr= () => {
       >
         <li className="nav-item" style={{ marginBottom: "10px" }}>
           <Link
-            to="/arroz-topografia"
+            to="/agrimensura-tramites"
             className="btn btn-outline-secondary"
             style={{
               display: "block",  // Hace que el enlace ocupe todo el espacio disponible

@@ -1,8 +1,11 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import MenuAmojs from './MenuTopo';
 
 const ArrozTopo = () => {
-
+  
+  const [trabajos, setTrabajos] = useState([]);
+  const [loading, setLoading] = useState([]);
+  const [error, setError] = useState(null);
     // Estado para controlar la visibilidad del menú
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -10,6 +13,42 @@ const ArrozTopo = () => {
     const toggleMenu = () => {
       setIsMenuOpen(!isMenuOpen);
     };
+
+      const fetchTrabajos = async () => {
+        try {
+          const response = await fetch("http://localhost:3001/api/trabajos");
+          if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+          }
+          const data = await response.json();
+    
+          // Filtrar los trabajos que tienen tipo_trabajo === 2
+          const trabajosFiltrados = data.filter(trabajo => trabajo.tipo_de_trabajo === 2);
+          setTrabajos(trabajosFiltrados);
+    
+          setLoading(false);
+        } catch (err) {
+          setError(err.message);
+          setLoading(false);
+        }
+      };
+    
+      useEffect(() => {
+        fetchTrabajos();
+      }, []);
+    
+      if (loading) return <p>Cargando...</p>;
+      if (error) return <p>Error: {error}</p>;
+    
+      const renderTrabajosPorEstado = (estadoId) =>
+        trabajos
+          .filter((trabajo) => trabajo.estado_trabajo === estadoId)
+          .map((trabajo) => (
+            <p key={trabajo.id_trabajo}>
+              {trabajo.num_trabajo} - {trabajo.nombre_trabajo}
+            </p>
+          ));
+    
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
@@ -74,21 +113,21 @@ const ArrozTopo = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="bg-danger text-white" style={{ width: "350px" }}>
-                  <p>Contenido aquí</p>
+            <tr>
+                <td className="bg-danger text-white border-white">
+                  {renderTrabajosPorEstado(2)}
                 </td>
-                <td className="bg-warning text-dark" style={{ width: "350px" }}>
-                  <p>Contenido aquí</p>
+                <td className="bg-warning text-dark">
+                  {renderTrabajosPorEstado(3)}
                 </td>
-                <td className="bg-info text-white" style={{ width: "350px" }}>
-                  <p>Contenido aquí</p>
+                <td className="bg-info text-white">
+                  {renderTrabajosPorEstado(4)}
                 </td>
-                <td className="bg-success text-white" style={{ width: "350px" }}> 
-                  <p>Contenido aquí</p>
+                <td className="bg-success text-white">
+                  {renderTrabajosPorEstado(5)}
                 </td>
-                <td className="bg-primary text-white" style={{ width: "350px" }}>
-                  <p>Contenido aquí</p>
+                <td className="bg-primary text-white">
+                  {renderTrabajosPorEstado(6)}
                 </td>
               </tr>
             </tbody>

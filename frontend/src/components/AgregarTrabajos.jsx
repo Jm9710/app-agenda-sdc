@@ -360,13 +360,13 @@ const AgregarTrabajos = () => {
               <option value={"Lavalleja"}>Lavalleja</option>
               <option value={"Maldonado"}>Maldonado</option>
               <option value={"Montevideo"}>Montevideo</option>
-              <option value={"Payusandu"}>Paysandu</option>
-              <option value={"Rio Negro"}>Río Negro</option>
+              <option value={"Paysandu"}>Paysandu</option>
+              <option value={"Rio Negro"}>Rio Negro</option>
               <option value={"Rivera"}>Rivera</option>
               <option value={"Salto"}>Salto</option>
               <option value={"San Jose"}>San Jose</option>
               <option value={"Soriano"}>Soriano</option>
-              <option value={"Tacuarembro"}>Tacuarembo</option>
+              <option value={"Tacuarembo"}>Tacuarembo</option>
               <option value={"Treinta y Tres"}>Treinta y Tres</option>
             </select>
           </div>

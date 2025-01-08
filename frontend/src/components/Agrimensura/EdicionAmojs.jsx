@@ -162,6 +162,7 @@ const Amojonamientos = () => {
     fetchClientes();
     fetchEstados();
   }, []);
+  
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
       <div
@@ -228,9 +229,6 @@ const Amojonamientos = () => {
                 <tr>
                   <th className="bg-light text-dark" style={{ width: "250px" }}>
                     Acciones
-                  </th>
-                  <th className="bg-light text-dark" style={{ width: "250px" }}>
-                    Tipo de trabajo
                   </th>
                   <th className="bg-light text-dark" style={{ width: "160px" }}>
                     Numero de trabajo
@@ -311,14 +309,6 @@ const Amojonamientos = () => {
                         </td>
                         <td
                           className="bg-light text-dark"
-                          style={{ width: "250px" }}
-                        >
-                          {tipoTrabajo
-                            ? tipoTrabajo.nombre_tipo_trabajo
-                            : "Desconocido"}
-                        </td>
-                        <td
-                          className="bg-light text-dark"
                           style={{ width: "160px" }}
                         >
                           {trabajo.num_trabajo}
@@ -327,7 +317,7 @@ const Amojonamientos = () => {
                           className="bg-light text-dark"
                           style={{ width: "200px" }}
                         >
-                          {trabajo.fecha_solicitud}
+                          {new Date(trabajo.fecha_solicitud).toLocaleDateString()}
                         </td>
                         <td
                           className="bg-light text-dark"

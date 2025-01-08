@@ -5,9 +5,29 @@ name = "pypi"
 
 [packages]
 flask = "*"
-sqlalchemy = "*"
+sqlalchemy = "==1.4.46"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+flask-swagger = "*"
+psycopg2-binary = "*"
+python-dotenv = "*"
+flask-cors = "*"
+gunicorn = "*"
+cloudinary = "*"
+flask-admin = "*"
+typing-extensions = "*"
+flask-jwt-extended = "==4.6.0"
+wtforms = "==3.1.2"
 
 [dev-packages]
 
 [requires]
 python_version = "3.12"
+
+[scripts]
+start="flask run -p 3001 -h 0.0.0.0"
+init="flask db init"
+migrate="flask db migrate"
+upgrade="flask db upgrade"
+downgrade="flask db downgrade"
+insert-test-data="flask insert-test-data"
