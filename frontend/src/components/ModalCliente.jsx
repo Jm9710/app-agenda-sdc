@@ -135,7 +135,7 @@ return (
             </div>
 
             {/* Botón de guardar */}
-            <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+            <button type="submit" className="btn btn-success w-100" disabled={loading}>
               {loading ? (
                 <div className="spinner-border spinner-border-sm" role="status">
                   <span className="visually-hidden">Cargando...</span>

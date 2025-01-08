@@ -216,13 +216,13 @@ const AgregarTrabajos = () => {
         }}
       >
         <div className="d-flex justify-content-between mb-3">
-          <Link to="/home" className="btn btn-outline-secondary">
+          <Link to="/home" className="btn btn-danger">
             Volver
           </Link>
           <h3 className="text-center flex-grow-1">Agregar Trabajo</h3>
           <button
             type="button"
-            className="btn btn-outline-secondary"
+            className="btn btn-primary"
             data-bs-toggle="modal"
             data-bs-target="#modalAgregarCliente"
             onClick={handleOpenModal}

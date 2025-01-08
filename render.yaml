@@ -1,0 +1,12 @@
+# Exported from Render on 2025-01-08T15:54:08Z
+databases:
+- name: bd-agenda
+  databaseName: bdsdcagenda
+  user: bdsdcagenda_user
+  plan: free
+  region: oregon
+  ipAllowList:
+  - source: 0.0.0.0/0
+    description: everywhere
+  postgresMajorVersion: "16"
+version: "1"

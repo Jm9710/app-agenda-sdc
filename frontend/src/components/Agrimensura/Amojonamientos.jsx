@@ -60,7 +60,7 @@ const Amojonamientos = () => {
       >
         <div className="d-flex justify-content-between align-items-center mb-3">
           <img
-            src="/images/logosdc.jpg"
+            src="/images/logosdc.png"
             alt="Logo SDC"
             style={{
               width: "100px",
@@ -72,7 +72,7 @@ const Amojonamientos = () => {
             className="flex-grow-1 text-black text-center m-0"
             style={{ fontSize: "24px" }}
           >
-            Progreso
+            Amojonamientos - Progreso
           </h1>
           <button
             className="me-3"

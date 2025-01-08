@@ -61,7 +61,7 @@ const Login = () => {
       >
         <div className="text-center mb-4">
           <img
-            src="/images/logosdc.jpg"
+            src="/images/logosdc.png"
             alt="Logo"
             style={{ maxWidth: "150px", width: "100%" }} // Ajusta el tamaño según necesites
           />

@@ -178,7 +178,7 @@ const EdicionAgrTr = () => {
         {/* Header */}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <img
-            src="/images/logosdc.jpg"
+            src="/images/logosdc.png"
             alt="Logo SDC"
             style={{
               width: "100px",
@@ -192,7 +192,7 @@ const EdicionAgrTr = () => {
               fontSize: "24px",
             }}
           >
-            Edicion de datos
+            Agrimensura Tramites - Edicion de datos
           </h1>
             <button className="me-3" style={{background: "transparent", border: "none"}}
             onClick={toggleMenu}

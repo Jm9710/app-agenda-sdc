@@ -8,7 +8,7 @@ const Home = () => {
         {/* Logo */}
         <div className="mb-4">
           <img
-            src="/images/logosdc.jpg" // Asegúrate de usar la ruta correcta
+            src="/images/logosdc.png" // Asegúrate de usar la ruta correcta
             alt="Logo"
             className="img-fluid"
             style={{ maxWidth: "300px" }}
@@ -20,11 +20,11 @@ const Home = () => {
 
         {/* Botones */}
         <div className="d-flex flex-column flex-md-row justify-content-center gap-3">
-          <Link to="/agregar-trabajos" className="btn btn-outline-secondary fw-bolder p-2" >Agregar Trabajos</Link>
-          <Link to="/amojonamientos" className="btn btn-outline-secondary fw-bolder p-2" >Agrimensura</Link>
-          <Link to="/arroz-topografia" className="btn btn-outline-secondary fw-bolder p-2" >Arroz topografía</Link>
-          <Link to="/agrimensura-tramites" className="btn btn-outline-secondary fw-bolder p-2" >Agrimensura trámites</Link>
-          <Link to="/Clientes" className="btn btn-outline-secondary fw-bolder p-2" >Ver clientes</Link>
+          <Link to="/agregar-trabajos" className="btn btn-outline-dark fw-bolder p-2" >Agregar Trabajos</Link>
+          <Link to="/amojonamientos" className="btn btn-outline-dark fw-bolder p-2 " >Agrimensura</Link>
+          <Link to="/arroz-topografia" className="btn btn-outline-dark fw-bolder p-2" >Arroz topografía</Link>
+          <Link to="/agrimensura-tramites" className="btn btn-outline-dark fw-bolder p-2" >Agrimensura trámites</Link>
+          <Link to="/Clientes" className="btn btn-outline-dark fw-bolder p-2" >Ver clientes</Link>
         </div>
       </div>
     </div>
