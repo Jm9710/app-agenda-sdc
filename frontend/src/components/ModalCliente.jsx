@@ -9,6 +9,7 @@ const [direccion, setDireccion] = useState("");
 const [telefono, setTelefono] = useState("");
 const [loading, setLoading] = useState("");
 const [error, setError] = useState("");
+
 const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
 
 const handleSubmit = async (e) => {
@@ -20,7 +21,7 @@ const handleSubmit = async (e) => {
 
   // Enviar los datos al backend
   try {
-    const response = await fetch(`${apiUrl} /api/clientes`, {
+    const response = await fetch(`${apiUrl}/api/clientes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
