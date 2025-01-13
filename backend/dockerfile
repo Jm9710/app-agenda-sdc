@@ -1,5 +1,5 @@
 # Usa una imagen base de Python
-FROM python:3.9-slim
+FROM python:3.12.3
 
 # Actualiza e instala las dependencias necesarias del sistema
 RUN apt-get update && apt-get install -y libpq-dev
@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./backend /app/
 
 # Exponer el puerto en el que corre la aplicación Flask
-EXPOSE 5000
+EXPOSE 3001
 
-# Define el comando para ejecutar la aplicación
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
+# Define el comando para ejecutar la aplicación con Gunicorn
+CMD ["gunicorn", "-b", "0.0.0.0:3001", "app:app"]

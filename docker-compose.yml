@@ -3,21 +3,23 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: frontend/Dockerfile
+      dockerfile: frontend/dockerfile  # Asegúrate de que el Dockerfile esté en la carpeta frontend
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Mapea el puerto 3000 en tu máquina local al 3000 del contenedor
     networks:
       - mynetwork
 
   backend:
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: backend/dockerfile  # Asegúrate de que el Dockerfile esté en la carpeta backend
     ports:
-      - "5000:5000"
+      - "5000:5000"  # Mapea el puerto 5000 en tu máquina local al 5000 del contenedor
     networks:
       - mynetwork
+    environment:
+      - FLASK_ENV=development  # Si estás en modo desarrollo, esto puede ayudar a mantener la app en ese modo.
 
 networks:
   mynetwork:
-    driver: bridge
+    driver: bridge  # Usamos el driver bridge para crear una red interna entre los contenedores

@@ -1,23 +1,24 @@
 # Usa una imagen base de Node.js
-FROM node:14
+FROM node:16
 
 # Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia el archivo package.json y package-lock.json
+# Copia los archivos de package.json y package-lock.json
 COPY ./frontend/package.json ./frontend/package-lock.json /app/
 
 # Instala las dependencias de Node.js
 RUN npm install
 
-# Copia el código fuente del frontend
+# Copia todo el código fuente del frontend
 COPY ./frontend /app
 
-# Compila el proyecto de React
+# Si estás construyendo una versión de producción
 RUN npm run build
 
 # Exponer el puerto en el que corre tu aplicación
 EXPOSE 3000
 
-# Define el comando por defecto para correr el servidor de producción
+# En producción, el comando correcto para servir el build sería:
+# Si es desarrollo, usa el script correspondiente, por ejemplo `npm run dev`
 CMD ["npm", "start"]
