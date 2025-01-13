@@ -94,10 +94,14 @@ def obtener_usuarios():
 # Endpoint para Clientes
 @app.route('/api/clientes', methods=['POST'])
 def crear_cliente():
-    data = request.json
+    data = request.get_json()
+    
+    if not isinstance(data, dict):
+        return jsonify({"Error": "El cuerpo de la solicitud debe ser un JSON válido"}), 400
 
-    if not all(data.get(k) for k in ['nombre', 'apellido', 'cedula', 'direccion', 'telefono']):
-        return jsonify({"Error": "Faltan datos requeridos"}), 400
+    if not all(isinstance(data.get(k), str) and data[k].strip() for k in ['nombre', 'apellido', 'cedula', 'direccion', 'telefono']):
+        return jsonify({"Error": "Faltan datos requeridos o son inválidos"}), 400
+
 
     nuevo_cliente = Cliente(
         nombre=data['nombre'],
