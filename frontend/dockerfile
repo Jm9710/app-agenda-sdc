@@ -1,5 +1,5 @@
-# Usa una imagen base de Node.js
-FROM node:16
+# Etapa de construcción
+FROM node:16 AS build
 
 # Establece el directorio de trabajo
 WORKDIR /app
@@ -13,12 +13,23 @@ RUN npm install
 # Copia todo el código fuente del frontend
 COPY . /app
 
-# Si estás construyendo una versión de producción
+# Ejecuta el build para crear los archivos estáticos para producción
 RUN npm run build
 
-# Exponer el puerto en el que corre tu aplicación
-EXPOSE 3000
+# Etapa de servidor de producción
+FROM node:16-slim
 
-# En producción, el comando correcto para servir el build sería:
-# Si es desarrollo, usa el script correspondiente, por ejemplo `npm run dev`
-CMD ["npm", "start"]
+# Instala 'serve' globalmente para servir la aplicación construida
+RUN npm install -g serve
+
+# Establece el directorio de trabajo para la etapa final
+WORKDIR /app
+
+# Copia los archivos construidos de la etapa anterior
+COPY --from=build /app/build /app
+
+# Exponer el puerto 5000 para servir la aplicación
+EXPOSE 3001
+
+# Comando para servir la aplicación con 'serve' en producción
+CMD ["serve", "-s", ".", "-l", "3001"]
