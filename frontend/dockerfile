@@ -11,7 +11,7 @@ COPY package.json package-lock.json /app/
 RUN npm install
 
 # Copia todo el código fuente del frontend
-COPY ./frontend /app
+COPY . /app
 
 # Si estás construyendo una versión de producción
 RUN npm run build
