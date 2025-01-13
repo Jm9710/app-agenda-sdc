@@ -10,3 +10,17 @@ databases:
     description: everywhere
   postgresMajorVersion: "16"
 version: "1"
+
+services:
+  - type: web
+    name: backend
+    env: python
+    buildCommand: "docker build -t backend ./backend"  # Construir la imagen de Docker
+    startCommand: "docker run -p 5000:5000 backend"  # Ejecutar el contenedor en el puerto adecuado
+    rootDir: ./backend
+  - type: web
+    name: frontend
+    env: node
+    buildCommand: "docker build -t frontend ./frontend"  # Construir la imagen de Docker
+    startCommand: "docker run -p 3000:3000 frontend"  # Ejecutar el contenedor en el puerto adecuado
+    rootDir: ./frontend
