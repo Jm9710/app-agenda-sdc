@@ -10,6 +10,12 @@
 
 # production
 /build
+.render.yaml
+.docker-compose.yaml
+.dockerignore
+.txt
+.Pipfile
+.Pipfile.lock
 
 # misc
 .DS_Store
