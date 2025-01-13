@@ -8,7 +8,7 @@ const ResumenTopo= () => {
 
   const [clientes, setClientes] = useState([]);
   const [estados, setEstados] = useState([]);
-
+  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
   // Estado para controlar la visibilidad del menú
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -19,7 +19,7 @@ const ResumenTopo= () => {
 
   const fetchTrabajos = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/trabajos");
+      const response = await fetch(`${apiUrl}/api/trabajos`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -36,7 +36,7 @@ const ResumenTopo= () => {
 
   const fetchClientes = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/clientes");
+      const response = await fetch(`${apiUrl} /api/clientes`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -49,7 +49,7 @@ const ResumenTopo= () => {
 
   const fetchEstados = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/estados");
+      const response = await fetch(`${apiUrl} /api/estados`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }

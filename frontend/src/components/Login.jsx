@@ -11,13 +11,15 @@ const Login = () => {
   const [loading, setLoading] = useState(false); // Estado para manejar el spinner
   const navigate = useNavigate(); // Hook para navegación
 
+  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
     setLoading(true); // Activar el spinner
   
     try {
       // Realiza la solicitud POST al backend para el login utilizando fetch
-      const response = await fetch("http://localhost:3001/api/login", {
+      const response = await fetch(`${apiUrl}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json", // Especifica el tipo de contenido

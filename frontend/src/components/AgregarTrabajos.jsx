@@ -30,10 +30,12 @@ const AgregarTrabajos = () => {
   const [selectedPlanilla, setSelectedPlanilla] = useState("");
   const [clientes, setClientes] = useState([]);
 
+  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/clientes");
+        const response = await fetch(`${apiUrl}/api/clientes`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -47,7 +49,7 @@ const AgregarTrabajos = () => {
     const fetchPlanillas = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3001/api/tipo_de_trabajos"
+          `${apiUrl}/api/tipo_de_trabajos`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -63,7 +65,7 @@ const AgregarTrabajos = () => {
     const fetchUltimoNumeroTrabajo = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3001/api/ultimo_numero_trabajo"
+          `${apiUrl}/api/ultimo_numero_trabajo`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -164,7 +166,7 @@ const AgregarTrabajos = () => {
 
       console.log("Datos preparados para enviar:", requestData);
 
-      const response = await fetch("http://localhost:3001/api/trabajo", {
+      const response = await fetch(`${apiUrl}/api/trabajo`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

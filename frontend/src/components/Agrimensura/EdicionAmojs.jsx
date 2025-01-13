@@ -11,6 +11,9 @@ const Amojonamientos = () => {
   const [selectedTrabajo, setSelectedTrabajo] = useState(null); // Para almacenar el trabajo que se edita
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+
+
   // Toggle de menú
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -20,7 +23,7 @@ const Amojonamientos = () => {
     // Obtener los estados disponibles desde la API
     const fetchEstados = async () => {
       try {
-        const response = await fetch("http://localhost:3001/api/estados");
+        const response = await fetch(`${apiUrl}/api/estados`); 
         if (!response.ok) {
           throw new Error("No se pudieron obtener los estados.");
         }
@@ -47,7 +50,7 @@ const Amojonamientos = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/api/trabajos/${id}`, {
+      const response = await fetch(`${apiUrl}/api/trabajos/${id}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -70,7 +73,7 @@ const Amojonamientos = () => {
   const handleSaveEdit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch(`http://localhost:3001/api/trabajos/${selectedTrabajo.id_trabajo}`, {
+      const response = await fetch(`${apiUrl}/api/trabajos/${selectedTrabajo.id_trabajo}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +87,7 @@ const Amojonamientos = () => {
   
       // Actualizamos la lista de trabajos
       const fetchTrabajos = async () => {
-        const trabajosResponse = await fetch("http://localhost:3001/api/trabajos");
+        const trabajosResponse = await fetch(`${apiUrl}/api/trabajos`); 
         const trabajosData = await trabajosResponse.json();
         setTrabajos(trabajosData); // Actualizamos la lista de trabajos en el estado
       };
@@ -102,7 +105,7 @@ const Amojonamientos = () => {
   // Funciones para cargar los datos
   const fetchTrabajos = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/trabajos");
+      const response = await fetch(`${apiUrl}api/trabajos`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -117,7 +120,7 @@ const Amojonamientos = () => {
 
   const fetchClientes = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/clientes");
+      const response = await fetch(`${apiUrl}/api/clientes`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -130,7 +133,7 @@ const Amojonamientos = () => {
 
   const fetchEstados = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/estados");
+      const response = await fetch(`${apiUrl}/api/estados`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -144,7 +147,7 @@ const Amojonamientos = () => {
   const fetchTiposDeTrabajo = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3001/api/tipo_de_trabajos"
+        `${apiUrl}/api/tipo_de_trabajos`
       );
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);

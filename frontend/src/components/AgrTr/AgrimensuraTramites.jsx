@@ -7,13 +7,15 @@ const AgrTr = () => {
   const [error, setError] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   const fetchTrabajos = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/trabajos");
+      const response = await fetch(`${apiUrl}/api/trabajos`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }

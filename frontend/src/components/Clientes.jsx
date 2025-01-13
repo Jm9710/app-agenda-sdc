@@ -5,7 +5,12 @@ import ModalCliente from "./ModalCliente";
 
 const socket = io("http://localhost:3001"); // Cambia el puerto si es necesario
 
+
+
 const Clientes = () => {
+
+  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+  
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,7 +22,7 @@ const Clientes = () => {
 
   const fetchClientes = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/clientes");
+      const response = await fetch(`${apiUrl}/api/clientes`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
