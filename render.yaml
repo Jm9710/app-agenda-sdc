@@ -21,6 +21,6 @@ services:
   - type: web
     name: frontend
     env: node
-    buildCommand: "docker build -t frontend ./frontend"  # Construir la imagen de Docker
-    startCommand: "docker run -p 3000:3000 frontend"  # Ejecutar el contenedor en el puerto adecuado
+    buildCommand: "npm install && npm run build"
+    startCommand: "HOST=0.0.0.0 npm start"  # Establece el host en 0.0.0.0 para producción
     rootDir: ./frontend
