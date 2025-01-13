@@ -16,7 +16,7 @@ services:
     name: backend
     env: python
     buildCommand: "docker build -t backend ./backend"  # Construir la imagen de Docker
-    startCommand: "docker run -p 5000:5000 backend"  # Ejecutar el contenedor en el puerto adecuado
+    startCommand: "docker run -p 3001:3001 backend"  # Ejecutar el contenedor en el puerto adecuado
     rootDir: ./backend
   - type: web
     name: frontend
