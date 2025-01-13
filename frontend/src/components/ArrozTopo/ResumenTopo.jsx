@@ -8,8 +8,8 @@ const ResumenTopo= () => {
 
   const [clientes, setClientes] = useState([]);
   const [estados, setEstados] = useState([]);
-  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
-  // Estado para controlar la visibilidad del menú
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+  //   // Estado para controlar la visibilidad del menú
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Función para cambiar el estado de visibilidad del menú

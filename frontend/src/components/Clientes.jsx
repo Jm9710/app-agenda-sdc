@@ -9,7 +9,7 @@ const socket = io("http://localhost:3001"); // Cambia el puerto si es necesario
 
 const Clientes = () => {
 
-  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
   
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -6,8 +6,7 @@ const ArrozTopo = () => {
   const [trabajos, setTrabajos] = useState([]);
   const [loading, setLoading] = useState([]);
   const [error, setError] = useState(null);
-  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
-
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
     // Estado para controlar la visibilidad del menú
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 

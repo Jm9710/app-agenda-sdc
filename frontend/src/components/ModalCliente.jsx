@@ -10,7 +10,7 @@ const [telefono, setTelefono] = useState("");
 const [loading, setLoading] = useState("");
 const [error, setError] = useState("");
 
-const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
 
 const handleSubmit = async (e) => {
   e.preventDefault();

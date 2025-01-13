@@ -30,8 +30,8 @@ const AgregarTrabajos = () => {
   const [selectedPlanilla, setSelectedPlanilla] = useState("");
   const [clientes, setClientes] = useState([]);
 
-  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
-
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+  
   useEffect(() => {
     const fetchClientes = async () => {
       try {

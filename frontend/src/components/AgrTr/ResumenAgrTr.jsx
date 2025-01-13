@@ -9,8 +9,8 @@ const ResumenAgrTr = () => {
   const [clientes, setClientes] = useState([]);
   const [estados, setEstados] = useState([]);
   
-  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
-
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+  
   // Estado para controlar la visibilidad del menú
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 

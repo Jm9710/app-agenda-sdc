@@ -6,8 +6,8 @@ const Amojonamientos = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
-
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+  
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };

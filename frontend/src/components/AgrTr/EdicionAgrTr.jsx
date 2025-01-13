@@ -10,8 +10,7 @@ const EdicionAgrTr = () => {
   const [estados, setEstados] = useState([]);
   const [selectedTrabajo, setSelectedTrabajo] = useState(null); // Para almacenar el trabajo que se edita
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
-
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
   // Toggle de menú
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
