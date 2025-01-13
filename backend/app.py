@@ -330,7 +330,7 @@ def obtener_ultimo_numero_trabajo():
     if ultimo_trabajo:
         siguiente_numero = ultimo_trabajo.num_trabajo + 1
     else:
-        siguiente_numero = 1  # Si no hay trabajos, empieza desde el número 1
+        siguiente_numero = 9000  # Si no hay trabajos, empieza desde el número 1
 
     return jsonify({"ultimo_numero": siguiente_numero})
 
