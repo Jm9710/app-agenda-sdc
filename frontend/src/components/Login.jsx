@@ -11,7 +11,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false); // Estado para manejar el spinner
   const navigate = useNavigate(); // Hook para navegación
 
-  const apiUrl = process.env.BACKEND_URL;
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
