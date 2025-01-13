@@ -87,7 +87,7 @@ const Amojonamientos = () => {
   
       // Actualizamos la lista de trabajos
       const fetchTrabajos = async () => {
-        const trabajosResponse = await fetch(`${apiUrl}/api/trabajos`); 
+        const trabajosResponse = await fetch(`${apiUrl}/api/trabajos`);
         const trabajosData = await trabajosResponse.json();
         setTrabajos(trabajosData); // Actualizamos la lista de trabajos en el estado
       };
@@ -105,7 +105,7 @@ const Amojonamientos = () => {
   // Funciones para cargar los datos
   const fetchTrabajos = async () => {
     try {
-      const response = await fetch(`${apiUrl}api/trabajos`);
+      const response = await fetch(`${apiUrl}/api/trabajos`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
