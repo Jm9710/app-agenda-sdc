@@ -11,7 +11,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false); // Estado para manejar el spinner
   const navigate = useNavigate(); // Hook para navegación
 
-  const apiUrl = process.env.BACKEND_URL || 'http://localhost:3001';
+  const apiUrl = process.env.BACKEND_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
