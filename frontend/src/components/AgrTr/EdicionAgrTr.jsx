@@ -224,7 +224,7 @@ const EdicionAgrTr = () => {
           ) : (
             <table
               className="table table-bordered table-striped text-center"
-              style={{ width: "100%", tableLayout: "fixed" }}
+              style={{ width: "100%", tableLayout: "auto" }}
             >
               <thead>
                 <tr>

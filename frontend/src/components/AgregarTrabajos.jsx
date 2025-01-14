@@ -399,7 +399,7 @@ const AgregarTrabajos = () => {
               <option value="">Selecciona un cliente</option>
               {clientes.map((clienteItem) => (
                 <option key={clienteItem.id} value={clienteItem.id}>
-                  {clienteItem.nombre}
+                  {clienteItem.nombre} {clienteItem.apellido} {clienteItem.direccion}
                 </option>
               ))}
             </select>

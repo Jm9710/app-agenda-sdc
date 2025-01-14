@@ -221,7 +221,7 @@ const EdiccionTopo = () => {
           ) : error ? (
             <p> Error: {error}</p>
           ) : (
-          <table className="table table-bordered table-striped text-center" style={{ width: "100%", tableLayout: "fixed" }}>
+          <table className="table table-bordered table-striped text-center" style={{ width: "100%", tableLayout: "auto" }}>
             <thead>
               <tr>
               <th className="bg-light text-dark" style={{ width: "250px" }}>

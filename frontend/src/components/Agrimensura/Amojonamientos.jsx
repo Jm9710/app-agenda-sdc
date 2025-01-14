@@ -3,14 +3,39 @@ import MenuAmojs from "./MenuAmojs";
 
 const Amojonamientos = () => {
   const [trabajos, setTrabajos] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [clientesMap, setClientesMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
-  
+  const apiUrl =
+    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const fetchClientes = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/api/clientes`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+  
+      // Crear un diccionario de clientes { cliente_id: nombre_cliente }
+      const map = data.reduce((acc, cliente) => {
+        acc[cliente.id_cliente] = `${cliente.nombre} ${cliente.apellido}`; // Concatenar nombre y apellido
+        return acc;
+      }, {});
+  
+      setClientes(data);
+      setClientesMap(map); // Guardar el diccionario en el estado
+    } catch (err) {
+      console.error("Error al obtener clientes:", err);
+    }
+  };
+  
 
   const fetchTrabajos = async () => {
     try {
@@ -20,8 +45,9 @@ const Amojonamientos = () => {
       }
       const data = await response.json();
 
-      // Filtrar los trabajos que tienen tipo_trabajo === 1
-      const trabajosFiltrados = data.filter(trabajo => trabajo.tipo_de_trabajo === 1);
+      const trabajosFiltrados = data.filter(
+        (trabajo) => trabajo.tipo_de_trabajo === 1
+      );
       setTrabajos(trabajosFiltrados);
 
       setLoading(false);
@@ -33,6 +59,7 @@ const Amojonamientos = () => {
 
   useEffect(() => {
     fetchTrabajos();
+    fetchClientes();
   }, []);
 
   if (loading) return <p>Cargando...</p>;
@@ -43,9 +70,12 @@ const Amojonamientos = () => {
       .filter((trabajo) => trabajo.estado_trabajo === estadoId)
       .map((trabajo) => (
         <p key={trabajo.id_trabajo}>
-          {trabajo.num_trabajo} - {trabajo.nombre_trabajo}
+          {trabajo.num_trabajo} - {trabajo.localidad} - {trabajo.nombre_trabajo} -{" "}
+          <strong>{clientesMap[trabajo.id_cliente ] || "Desconocido"}</strong> -{" "}
+          {trabajo.telefono_cliente}
         </p>
       ));
+
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
@@ -97,25 +127,15 @@ const Amojonamientos = () => {
         >
           <table
             className="table table-bordered text-center"
-            style={{ width: "100%", tableLayout: "fixed" }}
+            style={{ width: "100%", tableLayout: "auto"  }} 
           >
             <thead>
               <tr>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>
-                  Por hacer
-                </th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>
-                  En progreso
-                </th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>
-                  Por cobrar
-                </th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>
-                  Para facturar
-                </th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>
-                  Facturado
-                </th>
+                <th className="bg-light text-dark">Por hacer</th>
+                <th className="bg-light text-dark">En progreso</th>
+                <th className="bg-light text-dark">Por cobrar</th>
+                <th className="bg-light text-dark">Para facturar</th>
+                <th className="bg-light text-dark">Facturado</th>
               </tr>
             </thead>
             <tbody>
@@ -126,7 +146,7 @@ const Amojonamientos = () => {
                 <td className="bg-warning text-dark">
                   {renderTrabajosPorEstado(3)}
                 </td>
-                <td className="bg-info text-white">
+                <td className="bg-info text-dark">
                   {renderTrabajosPorEstado(4)}
                 </td>
                 <td className="bg-success text-white">

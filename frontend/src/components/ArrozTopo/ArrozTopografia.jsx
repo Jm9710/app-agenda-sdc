@@ -6,13 +6,37 @@ const ArrozTopo = () => {
   const [trabajos, setTrabajos] = useState([]);
   const [loading, setLoading] = useState([]);
   const [error, setError] = useState(null);
+  const [clientes, setClientes] = useState([]);
+  const [clientesMap, setClientesMap] = useState({});
   const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+  
     // Estado para controlar la visibilidad del menú
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // Función para cambiar el estado de visibilidad del menú
     const toggleMenu = () => {
       setIsMenuOpen(!isMenuOpen);
+    };
+
+    const fetchClientes = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/api/clientes`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+    
+        // Crear un diccionario de clientes { cliente_id: nombre_cliente }
+        const map = data.reduce((acc, cliente) => {
+          acc[cliente.id_cliente] = `${cliente.nombre} ${cliente.apellido}`; // Concatenar nombre y apellido
+          return acc;
+        }, {});
+    
+        setClientes(data);
+        setClientesMap(map); // Guardar el diccionario en el estado
+      } catch (err) {
+        console.error("Error al obtener clientes:", err);
+      }
     };
 
       const fetchTrabajos = async () => {
@@ -36,6 +60,7 @@ const ArrozTopo = () => {
     
       useEffect(() => {
         fetchTrabajos();
+        fetchClientes();
       }, []);
     
       if (loading) return <p>Cargando...</p>;
@@ -46,7 +71,9 @@ const ArrozTopo = () => {
           .filter((trabajo) => trabajo.estado_trabajo === estadoId)
           .map((trabajo) => (
             <p key={trabajo.id_trabajo}>
-              {trabajo.num_trabajo} - {trabajo.nombre_trabajo}
+              {trabajo.num_trabajo} - {trabajo.localidad} - {trabajo.nombre_trabajo} -{" "}
+              <strong>{clientesMap[trabajo.id_cliente ] || "Desconocido"}</strong> -{" "}
+              {trabajo.telefono_cliente}
             </p>
           ));
     
@@ -103,7 +130,7 @@ const ArrozTopo = () => {
           {isMenuOpen && <MenuAmojs />}
 
           {/* Tabla con contenido */}
-          <table className="table table-bordered table-striped text-center" style={{ width: "100%", tableLayout: "fixed" }}>
+          <table className="table table-bordered table-striped text-center" style={{ width: "100%", tableLayout: "auto" }}>
             <thead>
               <tr>
                 <th className="bg-light text-dark" style={{ width: "350px" }}>Por hacer</th>
@@ -121,7 +148,7 @@ const ArrozTopo = () => {
                 <td className="bg-warning text-dark">
                   {renderTrabajosPorEstado(3)}
                 </td>
-                <td className="bg-info text-white">
+                <td className="bg-info text-dark">
                   {renderTrabajosPorEstado(4)}
                 </td>
                 <td className="bg-success text-white">

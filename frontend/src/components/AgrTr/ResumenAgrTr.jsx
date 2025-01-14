@@ -127,7 +127,7 @@ const ResumenAgrTr = () => {
           ) : (
             <table
               className="table table-bordered table-striped text-center"
-              style={{ width: "100%", tableLayout: "fixed" }}
+              style={{ width: "100%", tableLayout: "auto" }}
             >
               <thead>
                 <tr>
@@ -175,7 +175,7 @@ const ResumenAgrTr = () => {
                           className="bg-light text-dark"
                           style={{ width: "250px" }}
                         >
-                          {cliente ? cliente.nombre : "Cliente no encontrado"}
+                          {cliente ? cliente.nombre + " " + cliente.apellido : "Cliente no encontrado"}
                         </td>
                         <td
                           className="bg-light text-dark"

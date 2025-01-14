@@ -109,11 +109,11 @@ return (
                   id="clienteCedula"
                   value={cedula}
                   onChange={(e) => setCedula(e.target.value)}
-                  required
+                  
                 />
               </div>
               <div className="col-md-6">
-                <label htmlFor="clienteDireccion" className="form-label">Dirección</label>
+                <label htmlFor="clienteDireccion" className="form-label">Dirección o localidad</label>
                 <input
                   type="text"
                   className="form-control"

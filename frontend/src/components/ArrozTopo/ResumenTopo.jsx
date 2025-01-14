@@ -123,7 +123,7 @@ const ResumenTopo= () => {
           ) : error ? (
             <p> Error: {error}</p>
           ) : (
-          <table className="table table-bordered table-striped text-center" style={{ width: "100%", tableLayout: "fixed" }}>
+          <table className="table table-bordered table-striped text-center" style={{ width: "100%", tableLayout: "auto" }}>
             <thead>
               <tr>
                 <th className="bg-light text-dark" style={{ width: "200px" }}>Numero de trabajo</th>
@@ -160,7 +160,7 @@ const ResumenTopo= () => {
                           className="bg-light text-dark"
                           style={{ width: "250px" }}
                         >
-                          {cliente ? cliente.nombre : "Cliente no encontrado"}
+                          {cliente ? cliente.nombre + " " + cliente.apellido: "Cliente no encontrado"}
                         </td>
                         <td
                           className="bg-light text-dark"
