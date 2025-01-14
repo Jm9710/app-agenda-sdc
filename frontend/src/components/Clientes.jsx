@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
 import ModalCliente from "./ModalCliente";
 
-const socket = io("https://app-agenda-sdc-backend.onrender.com"); // Cambia el puerto si es necesario
+const socket = io("http://localhost:3001"); // Cambia el puerto si es necesario
 
 
 
