@@ -363,7 +363,7 @@ const AgregarTrabajos = () => {
               <option value={"Maldonado"}>Maldonado</option>
               <option value={"Montevideo"}>Montevideo</option>
               <option value={"Paysandu"}>Paysandu</option>
-              <option value={"Rio Negro"}>Rio Negro</option>
+              <option value={"Rio negro"}>Rio Negro</option>
               <option value={"Rivera"}>Rivera</option>
               <option value={"Salto"}>Salto</option>
               <option value={"San Jose"}>San Jose</option>
