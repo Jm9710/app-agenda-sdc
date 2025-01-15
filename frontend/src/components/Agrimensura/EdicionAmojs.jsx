@@ -282,6 +282,7 @@ const Amojonamientos = () => {
               <tbody>
                 {trabajos
                   .filter((trabajo) => trabajo.tipo_de_trabajo === 1)
+                  .sort((a, b) => a.num_trabajo - b.num_trabajo)
                   .map((trabajo) => {
                     const cliente = clientes.find(
                       (cl) => cl.id === trabajo.cliente_id

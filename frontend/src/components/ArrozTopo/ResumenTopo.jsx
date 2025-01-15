@@ -134,7 +134,7 @@ const ResumenTopo= () => {
               </tr>
             </thead>
             <tbody>
-                {trabajos.filter((trabajo) => trabajo.tipo_de_trabajo === 2).map((trabajo, index) => {
+                {trabajos.filter((trabajo) => trabajo.tipo_de_trabajo === 2).sort((a, b) => a.num_trabajo - b.num_trabajo).map((trabajo, index) => {
                     const cliente = clientes.find(
                       (cl) => cl.id === trabajo.cliente_id
                     );
