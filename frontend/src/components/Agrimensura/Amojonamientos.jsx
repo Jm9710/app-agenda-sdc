@@ -4,7 +4,6 @@ import MenuAmojs from "./MenuAmojs";
 const Amojonamientos = () => {
   const [trabajos, setTrabajos] = useState([]);
   const [clientes, setClientes] = useState([]);
-  const [clientesMap, setClientesMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,28 +14,21 @@ const Amojonamientos = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // Obtener los clientes
   const fetchClientes = async () => {
     try {
       const response = await fetch(`${apiUrl}/api/clientes`);
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`Error HTTP: ${response.status}`);
       }
       const data = await response.json();
-  
-      // Crear un diccionario de clientes { cliente_id: nombre_cliente }
-      const map = data.reduce((acc, cliente) => {
-        acc[cliente.id_cliente] = `${cliente.nombre} ${cliente.apellido}`; // Concatenar nombre y apellido
-        return acc;
-      }, {});
-  
-      setClientes(data);
-      setClientesMap(map); // Guardar el diccionario en el estado
+      setClientes(data); // Guardamos los clientes
     } catch (err) {
-      console.error("Error al obtener clientes:", err);
+      setError(err.message);
     }
   };
-  
 
+  // Obtener los trabajos
   const fetchTrabajos = async () => {
     try {
       const response = await fetch(`${apiUrl}/api/trabajos`);
@@ -44,12 +36,7 @@ const Amojonamientos = () => {
         throw new Error(`Error HTTP: ${response.status}`);
       }
       const data = await response.json();
-
-      const trabajosFiltrados = data.filter(
-        (trabajo) => trabajo.tipo_de_trabajo === 1
-      );
-      setTrabajos(trabajosFiltrados);
-
+      setTrabajos(data); // Guardamos los trabajos
       setLoading(false);
     } catch (err) {
       setError(err.message);
@@ -57,6 +44,7 @@ const Amojonamientos = () => {
     }
   };
 
+  // Fetch inicial de trabajos y clientes
   useEffect(() => {
     fetchTrabajos();
     fetchClientes();
@@ -65,16 +53,28 @@ const Amojonamientos = () => {
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  const renderTrabajosPorEstado = (estadoId) =>
-    trabajos
-      .filter((trabajo) => trabajo.estado_trabajo === estadoId)
-      .map((trabajo) => (
-        <p key={trabajo.id_trabajo}>
-          {trabajo.num_trabajo} - {trabajo.localidad} - {trabajo.nombre_trabajo} -{" "}
-          <strong>{clientesMap[trabajo.id_cliente ] || "Desconocido"}</strong> -{" "}
-          {trabajo.telefono_cliente}
-        </p>
-      ));
+  // Función para obtener el nombre del cliente asociado
+  const obtenerNombreCliente = (clienteId) => {
+    const cliente = clientes.find((cl) => cl.id === clienteId);
+    if (!cliente) {
+      return "Desconocido";
+    }
+    return `${cliente.nombre} ${cliente.apellido}`;
+  };
+
+  // Renderizar los trabajos filtrados por estado
+// Renderizar los trabajos filtrados por estado
+const renderTrabajosPorEstado = (estadoId) =>
+  trabajos
+    .filter((trabajo) => trabajo.estado_trabajo === estadoId)
+    .sort((a, b) => b.num_trabajo - a.num_trabajo) // Orden descendente por num_trabajo
+    .map((trabajo) => (
+      <p key={trabajo.id_trabajo}>
+        {trabajo.num_trabajo} - {trabajo.localidad} - {trabajo.nombre_trabajo} -{" "}
+        <strong>{obtenerNombreCliente(trabajo.cliente_id)}</strong> -{" "}
+        {trabajo.telefono_cliente}
+      </p>
+    ));
 
 
   return (
@@ -127,7 +127,7 @@ const Amojonamientos = () => {
         >
           <table
             className="table table-bordered text-center"
-            style={{ width: "100%", tableLayout: "auto"  }} 
+            style={{ width: "100%", tableLayout: "auto" }}
           >
             <thead>
               <tr>

@@ -14,24 +14,17 @@ const AgrTr = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  // Obtener los clientes
   const fetchClientes = async () => {
     try {
       const response = await fetch(`${apiUrl}/api/clientes`);
       if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+        throw new Error(`Error HTTP: ${response.status}`);
       }
       const data = await response.json();
-  
-      // Crear un diccionario de clientes { cliente_id: nombre_cliente }
-      const map = data.reduce((acc, cliente) => {
-        acc[cliente.id_cliente] = `${cliente.nombre} ${cliente.apellido}`; // Concatenar nombre y apellido
-        return acc;
-      }, {});
-  
-      setClientes(data);
-      setClientesMap(map); // Guardar el diccionario en el estado
+      setClientes(data); // Guardamos los clientes
     } catch (err) {
-      console.error("Error al obtener clientes:", err);
+      setError(err.message);
     }
   };
   
@@ -62,16 +55,28 @@ const AgrTr = () => {
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  const renderTrabajosPorEstado = (estadoId) =>
-    trabajos
-      .filter((trabajo) => trabajo.estado_trabajo === estadoId)
-      .map((trabajo) => (
-        <p key={trabajo.id_trabajo}>
-          {trabajo.num_trabajo} - {trabajo.localidad} - {trabajo.nombre_trabajo} -{" "}
-          <strong>{clientesMap[trabajo.id_cliente ] || "Desconocido"}</strong> -{" "}
-          {trabajo.telefono_cliente}
-        </p>
-      ));
+  // Función para obtener el nombre del cliente asociado
+  const obtenerNombreCliente = (clienteId) => {
+    const cliente = clientes.find((cl) => cl.id === clienteId);
+    if (!cliente) {
+      return "Desconocido";
+    }
+    return `${cliente.nombre} ${cliente.apellido}`;
+  };
+
+  // Renderizar los trabajos filtrados por estado
+// Renderizar los trabajos filtrados por estado
+const renderTrabajosPorEstado = (estadoId) =>
+  trabajos
+    .filter((trabajo) => trabajo.estado_trabajo === estadoId)
+    .sort((a, b) => b.num_trabajo - a.num_trabajo) // Orden descendente por num_trabajo
+    .map((trabajo) => (
+      <p key={trabajo.id_trabajo}>
+        {trabajo.num_trabajo} - {trabajo.localidad} - {trabajo.nombre_trabajo} -{" "}
+        <strong>{obtenerNombreCliente(trabajo.cliente_id)}</strong> -{" "}
+        {trabajo.telefono_cliente}
+      </p>
+    ));
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
