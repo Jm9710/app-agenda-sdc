@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { io } from "socket.io-client";
 import ModalCliente from "./ModalCliente";
 
-const socket = io("http://localhost:3001"); // Cambia el puerto si es necesario
-
-
-
 const Clientes = () => {
-
   const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
-  
+
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,17 +32,7 @@ const Clientes = () => {
   useEffect(() => {
     // Fetch inicial de los clientes
     fetchClientes();
-
-  // Configurar el socket para escuchar cambios
-  socket.on("actualizar_clientes", (data) => {
-    console.log("Clientes actualizados recibidos:", data); // Agrega esta línea para depurar
-    setClientes(data); // Actualiza la tabla con los nuevos datos
-  });
-
-  return () => {
-    socket.off("actualizar_clientes");
-  };
-}, []);
+  }, []);
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">

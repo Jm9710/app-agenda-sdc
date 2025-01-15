@@ -8,20 +8,13 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from datetime import datetime
 from admin import setup_admin
 from models import db, Usuario, Cliente, Estado, TipoTrabajo, Trabajo
-from flask_socketio import SocketIO
-from flask_socketio import emit
 from werkzeug.security import check_password_hash
 
 # Inicializa Flask
 app = Flask(__name__)
 CORS(app)
 
-# Inicializa SocketIO
-socketio = SocketIO(app, cors_allowed_origins="*")
-
-
 load_dotenv()
-
 # Configura la aplicación
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://bdsdcagenda_user:yUzUdvy0Aumag5DxgNPz72HQ4IRbfbN1@dpg-ctdduo0gph6c73es1sfg-a.oregon-postgres.render.com/bdsdcagenda'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -117,7 +110,7 @@ def crear_cliente():
 
         # Emitir evento de actualización de clientes
         clientes_actualizados = [cliente.serialize() for cliente in Cliente.query.all()]
-        socketio.emit('actualizar_clientes', clientes_actualizados)
+
 
         return jsonify(nuevo_cliente.serialize()), 201
     except Exception as e:
@@ -336,5 +329,4 @@ def obtener_ultimo_numero_trabajo():
 
 
 if __name__ == '__main__':
-    socketio.run(app,host="0.0.0.0", debug=True, port=3001)
-
+    app.run(host="0.0.0.0", debug=True, port=3001)
