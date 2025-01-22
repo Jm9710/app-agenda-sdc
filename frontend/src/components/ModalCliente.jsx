@@ -44,6 +44,7 @@ const handleSubmit = async (e) => {
       setCedula("");
       setDireccion("");
       setTelefono("");
+      window.location.reload();
     }else{
       setError(data.Error || "Hubo un problema al creare el cliente");
     }

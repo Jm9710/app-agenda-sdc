@@ -193,6 +193,7 @@ const AgregarTrabajos = () => {
         setIva(false);
         setComentarios("");
         setSelectedPlanilla("");
+        window.location.reload();
       } else {
         console.error("Error del servidor:", data);
         setError(data.error || "Hubo un problema al crear el trabajo");
@@ -210,7 +211,7 @@ const AgregarTrabajos = () => {
       <div
         className="card p-4 p-md-5 shadow-lg"
         style={{
-          maxWidth: "800px",
+          maxWidth: "1000px",
           width: "100%",
           height: "90vh",
           borderRadius: "20px",

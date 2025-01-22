@@ -29,7 +29,7 @@ class Cliente(db.Model):
     id_cliente = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(20), nullable=False)
     apellido = db.Column(db.String(20), nullable=False)
-    cedula = db.Column(db.String(20), unique=True, nullable=False)
+    cedula = db.Column(db.String(20), nullable=False)
     direccion = db.Column(db.String(100))
     telefono = db.Column(db.String(15))
     actualizado_por = db.Column(db.Integer, db.ForeignKey('usuarios.id_us'))

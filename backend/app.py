@@ -26,7 +26,6 @@ migrate = Migrate(app, db)
 setup_admin(app)
 jwt = JWTManager(app)
 
-
 # Ruta de prueba
 @app.route('/', methods=['GET'])
 def saludo():
@@ -92,7 +91,7 @@ def crear_cliente():
     if not isinstance(data, dict):
         return jsonify({"Error": "El cuerpo de la solicitud debe ser un JSON válido"}), 400
 
-    if not all(isinstance(data.get(k), str) and data[k].strip() for k in ['nombre', 'apellido', 'cedula', 'direccion', 'telefono']):
+    if not all(isinstance(data.get(k), str) and data[k].strip() for k in ['nombre', 'apellido', 'direccion', 'telefono']):
         return jsonify({"Error": "Faltan datos requeridos o son inválidos"}), 400
 
 
