@@ -28,7 +28,6 @@ const Amojonamientos = () => {
     }
   };
 
-  // Obtener los trabajos
   const fetchTrabajos = async () => {
     try {
       const response = await fetch(`${apiUrl}/api/trabajos`);
@@ -36,7 +35,13 @@ const Amojonamientos = () => {
         throw new Error(`Error HTTP: ${response.status}`);
       }
       const data = await response.json();
-      setTrabajos(data); // Guardamos los trabajos
+
+      // Filtrar los trabajos que tienen tipo_trabajo === 2
+      const trabajosFiltrados = data.filter(
+        (trabajo) => trabajo.tipo_de_trabajo === 1
+      );
+      setTrabajos(trabajosFiltrados);
+
       setLoading(false);
     } catch (err) {
       setError(err.message);
