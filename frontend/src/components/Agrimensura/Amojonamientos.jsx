@@ -36,10 +36,8 @@ const Amojonamientos = () => {
       }
       const data = await response.json();
 
-      // Filtrar los trabajos que tienen tipo_trabajo === 2
-      const trabajosFiltrados = data.filter(
-        (trabajo) => trabajo.tipo_de_trabajo === 1
-      );
+      // Filtrar los trabajos que tienen tipo_trabajo === 1
+      const trabajosFiltrados = data.filter(trabajo => trabajo.tipo_de_trabajo === 1);
       setTrabajos(trabajosFiltrados);
 
       setLoading(false);
