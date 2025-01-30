@@ -370,3 +370,175 @@ eliminarTrabajo: async (id) => {
     console.error("Error en la conexión al servidor:", error);
   }
 },
+
+
+  return (
+    <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
+      <div
+        className="card p-4 p-md-2 shadow-lg text-center"
+        style={{
+          width: "100%",
+          height: "90vh",
+          maxWidth: "95%",
+          borderRadius: "20px",
+          overflow: "hidden",
+        }}
+      >
+        {/* Header */}
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          {/* [Mismo código del header...] */}
+        </div>
+
+        {/* Contenedor principal con scroll */}
+        <div
+          className="overflow-auto"
+          style={{
+            maxHeight: "75vh",
+            position: "relative",
+            overflowX: "auto"
+          }}
+        >
+          {/* Controles de zoom y búsqueda */}
+          <div>
+            <input
+              type="text"
+              style={{ width: "350px" }}
+              className="form-control input-search m-2"
+              placeholder="Buscar..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label="Search..."
+            />
+            <button
+              onClick={() => setZoom(zoom + 0.1)}
+              style={{ fontSize: "18px", marginLeft: "10px" }}
+              className="btn btn-primary"
+            >
+              +
+            </button>
+            <button
+              onClick={() => setZoom(zoom - 0.1)}
+              style={{ fontSize: "18px", marginLeft: "5px" }}
+              className="btn btn-primary"
+            >
+              -
+            </button>
+          </div>
+
+          {isMenuOpen && <MenuAmojs />}
+
+          {/* Tabla de cabecera fija */}
+          <table
+            className="table table-bordered table-striped text-center"
+            style={{
+              width: "100%",
+              tableLayout: "auto",
+              position: "sticky",
+              top: 0,
+              backgroundColor: "#fff",
+              zIndex: 2,
+              marginBottom: 0
+            }}
+          >
+            <thead>
+              <tr>
+                <th className="bg-light text-dark" style={{ width: "250px" }}>Acciones</th>
+                <th className="bg-light text-dark" style={{ width: "160px" }}>Número de trabajo</th>
+                <th className="bg-light text-dark" style={{ width: "300px" }}>Fecha de solicitud</th>
+                <th className="bg-light text-dark" style={{ width: "100px" }}>Comentarios</th>
+                <th className="bg-light text-dark" style={{ width: "250px" }}>Nombre cliente</th>
+                <th className="bg-light text-dark" style={{ width: "250px" }}>Nombre de trabajo</th>
+                <th className="bg-light text-dark" style={{ width: "150px" }}>Localidad</th>
+                <th className="bg-light text-dark" style={{ width: "100px" }}>Manzana</th>
+                <th className="bg-light text-dark" style={{ width: "100px" }}>Solar</th>
+                <th className="bg-light text-dark" style={{ width: "100px" }}>Padron</th>
+                <th className="bg-light text-dark" style={{ width: "150px" }}>Departamento</th>
+                <th className="bg-light text-dark" style={{ width: "250px" }}>Telefono cliente</th>
+                <th className="bg-light text-dark" style={{ width: "150px" }}>Moneda</th>
+                <th className="bg-light text-dark" style={{ width: "150px" }}>Costo</th>
+                <th className="bg-light text-dark" style={{ width: "150px" }}>Iva</th>
+                <th className="bg-light text-dark" style={{ width: "150px" }}>Estado de trabajo</th>
+              </tr>
+            </thead>
+          </table>
+
+          {/* Contenedor del cuerpo con zoom */}
+          <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}>
+            <table
+              className="table table-bordered table-striped text-center"
+              style={{
+                width: "100%",
+                tableLayout: "auto",
+                marginTop: "-1px" // Compensa el borde de la cabecera
+              }}
+            >
+              <tbody>
+                {trabajos
+                  .filter((trabajo) =>
+                    Object.values(trabajo)
+                      .join(" ")
+                      .toLowerCase()
+                      .includes(searchTerm.toLowerCase())
+                  )
+                  .sort((a, b) => a.num_trabajo - b.num_trabajo)
+                  .map((trabajo) => {
+                    const cliente = clientes.find(
+                      (cl) => cl.id === trabajo.cliente_id
+                    );
+                    const estado = estados.find(
+                      (est) => est.id_estado === trabajo.estado_trabajo
+                    );
+                    const tipoTrabajo = tiposDeTrabajo.find(
+                      (tipo) => tipo.id === trabajo.nombre_tipo_trabajo
+                    );
+
+                    return (
+                      <tr key={trabajo.id_trabajo}>
+                        <td style={{ width: "250px", display: "flex", gap: "8px" }}>
+                          <button
+                            onClick={() => handleEdit(trabajo)}
+                            className="btn btn-warning p-1 m-0"
+                          >
+                            <i className="fas fa-edit"></i> Editar
+                          </button>
+                          <button
+                            onClick={() => handleDelete(trabajo.id_trabajo)}
+                            className="btn btn-danger p-1 m-0"
+                          >
+                            <i className="fas fa-trash-alt"></i> Eliminar
+                          </button>
+                        </td>
+                        <td style={{ width: "160px" }}>{trabajo.num_trabajo}</td>
+                        <td style={{ width: "300px" }}>
+                          {new Date(trabajo.fecha_solicitud).toLocaleDateString()}
+                        </td>
+                        <td style={{ width: "100px" }}>{trabajo.comentarios}</td>
+                        <td style={{ width: "250px" }}>
+                          {cliente ? cliente.nombre + " " + cliente.apellido : "Cliente no encontrado"}
+                        </td>
+                        <td style={{ width: "250px" }}>{trabajo.nombre_trabajo}</td>
+                        <td style={{ width: "150px" }}>{trabajo.localidad}</td>
+                        <td style={{ width: "100px" }}>{trabajo.manzana}</td>
+                        <td style={{ width: "100px" }}>{trabajo.solar}</td>
+                        <td style={{ width: "100px" }}>{trabajo.padron}</td>
+                        <td style={{ width: "150px" }}>{trabajo.departamento}</td>
+                        <td style={{ width: "250px" }}>{trabajo.telefono_cliente}</td>
+                        <td style={{ width: "150px" }}>{trabajo.moneda}</td>
+                        <td style={{ width: "150px" }}>{trabajo.costo}</td>
+                        <td style={{ width: "150px" }}>
+                          {trabajo.iva ? (
+                            <i className="fas fa-check" style={{ color: "green" }}></i>
+                          ) : (
+                            <i className="fas fa-times" style={{ color: "red" }}></i>
+                          )}
+                        </td>
+                        <td style={{ width: "150px" }}>
+                          {estado ? estado.tipo_estado : "Estado no encontrado"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
+        </div>

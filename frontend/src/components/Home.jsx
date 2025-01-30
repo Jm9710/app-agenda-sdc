@@ -21,7 +21,7 @@ const Home = () => {
         {/* Botones */}
         <div className="d-flex flex-column flex-md-row justify-content-center gap-3">
           <Link to="/agregar-trabajos" className="btn btn-outline-dark fw-bolder p-2" >Agregar Trabajos</Link>
-          <Link to="/amojonamientos" className="btn btn-outline-dark fw-bolder p-2 " >Agrimensura</Link>
+          <Link to="/amojonamientos" className="btn btn-outline-dark fw-bolder p-2 " >Amojonamientos y DJCU</Link>
           <Link to="/arroz-topografia" className="btn btn-outline-dark fw-bolder p-2" >Arroz topografía</Link>
           <Link to="/agrimensura-tramites" className="btn btn-outline-dark fw-bolder p-2" >Agrimensura trámites</Link>
           <Link to="/Clientes" className="btn btn-outline-dark fw-bolder p-2" >Ver clientes</Link>

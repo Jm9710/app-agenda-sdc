@@ -135,7 +135,7 @@ const Amojonamientos = () => {
               className="table table-bordered table-striped text-center"
               style={{ width: "100%", tableLayout: "auto" }}
             >
-              <thead>
+              <thead style={{ position: "sticky", top: -1, backgroundColor: "#fff" }}>
                 <tr>
                   <th className="bg-light text-dark" style={{ width: "200px" }}>
                     Numero de trabajo
