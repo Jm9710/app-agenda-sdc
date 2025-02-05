@@ -278,11 +278,11 @@ const Amojonamientos = () => {
               -
             </button>
             <button
-          onClick={() => setZoom(1)} // Restablece el zoom al valor predeterminado
-          className="btn btn-secondary m-0"
-        >
-          Restablecer Zoom
-        </button>
+              onClick={() => setZoom(1)} // Restablece el zoom al valor predeterminado
+              className="btn btn-secondary m-0"
+            >
+              Restablecer Zoom
+            </button>
           </div>
 
           {isMenuOpen && <MenuAmojs />}
@@ -294,14 +294,14 @@ const Amojonamientos = () => {
             <p> Error: {error}</p>
           ) : (
             <div
-            style={{
-              overflow: "auto",
-              maxHeight: maxHeight, // Tamaño ajustable por breakpoint
-              transform: `scale(${zoom})`,
-              transformOrigin: "top left",
-              border: "1px solid #ddd",
-              width: "fit-content",
-            }}
+              style={{
+                overflow: "auto",
+                maxHeight: maxHeight, // Tamaño ajustable por breakpoint
+                transform: `scale(${zoom})`,
+                transformOrigin: "top left",
+                border: "1px solid #ddd",
+                width: "fit-content",
+              }}
             >
               <table
                 className="table table-bordered table-striped text-center"
@@ -420,11 +420,13 @@ const Amojonamientos = () => {
                 </thead>
                 <tbody>
                   {trabajos
-                    .filter((trabajo) =>
-                      Object.values(trabajo)
-                        .join(" ")
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase())
+                    .filter(
+                      (trabajo) =>
+                        trabajo.tipo_de_trabajo === 1 &&
+                        Object.values(trabajo)
+                          .join(" ")
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase())
                     )
                     .sort((a, b) => a.num_trabajo - b.num_trabajo)
                     .map((trabajo) => {

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import MenuAmojs from './MenuTopo';
+import MenuTopo from "./MenuTopo";
 
 const ResumenTopo= () => {
   const [trabajos, setTrabajos] = useState([]);
@@ -8,8 +8,10 @@ const ResumenTopo= () => {
 
   const [clientes, setClientes] = useState([]);
   const [estados, setEstados] = useState([]);
+
   const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
-  //   // Estado para controlar la visibilidad del menú
+
+  // Estado para controlar la visibilidad del menú
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Función para cambiar el estado de visibilidad del menú
@@ -36,7 +38,7 @@ const ResumenTopo= () => {
 
   const fetchClientes = async () => {
     try {
-      const response = await fetch(`${apiUrl} /api/clientes`);
+      const response = await fetch(`${apiUrl}/api/clientes`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -49,7 +51,7 @@ const ResumenTopo= () => {
 
   const fetchEstados = async () => {
     try {
-      const response = await fetch(`${apiUrl} /api/estados`);
+      const response = await fetch(`${apiUrl}/api/estados`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -71,9 +73,9 @@ const ResumenTopo= () => {
       <div
         className="card p-4 p-md-2 shadow-lg text-center"
         style={{
-          width: "100%",  // Esto asegura que el contenedor ocupe todo el ancho disponible en pantalla.
-          height: "90vh", // La altura sigue siendo un porcentaje de la altura del viewport.
-          maxWidth: "1200px", // Mantiene la proporción del contenedor sin que se estire más allá de este ancho
+          width: "100%",
+          height: "90vh",
+          maxWidth: "1200px",
           borderRadius: "20px",
           overflow: "hidden",
         }}
@@ -95,27 +97,33 @@ const ResumenTopo= () => {
               fontSize: "24px",
             }}
           >
-            Arroz Topografia - Edicion de datos
+            Arroz Topografia - Resumen de datos
           </h1>
-            <button className="me-3" style={{background: "transparent", border: "none"}}
+          <button
+            className="me-3"
+            style={{ background: "transparent", border: "none" }}
             onClick={toggleMenu}
-            >          
-              <i className="fas fa-bars" style={{ fontSize: "30px",}}
-          ></i></button>
+          >
+            <i
+              className="fas fa-bars"
+              style={{
+                fontSize: "30px",
+              }}
+            ></i>
+          </button>
         </div>
 
         {/* Contenedor con scroll horizontal */}
         <div
           className="overflow-auto"
           style={{
-            maxHeight: "75vh", // Se mantiene la altura máxima para el scroll vertical si es necesario
-            overflowX: "auto", // Permite el desplazamiento horizontal si el contenido excede el contenedor
-            whiteSpace: "nowrap", // Evita que el contenido se rompa en varias líneas
+            maxHeight: "75vh",
+            overflowX: "auto",
+            whiteSpace: "nowrap",
             paddingRight: "10px",
           }}
         >
-          
-          {isMenuOpen && <MenuAmojs />}
+          {isMenuOpen && <MenuTopo />}
 
           {/* Tabla con contenido */}
           {loading ? (
@@ -123,17 +131,30 @@ const ResumenTopo= () => {
           ) : error ? (
             <p> Error: {error}</p>
           ) : (
-          <table className="table table-bordered table-striped text-center" style={{ width: "100%", tableLayout: "auto" }}>
-            <thead>
-              <tr>
-                <th className="bg-light text-dark" style={{ width: "200px" }}>Numero de trabajo</th>
-                <th className="bg-light text-dark" style={{ width: "300px" }}>Nombre de trabajo</th>
-                <th className="bg-light text-dark" style={{ width: "250px" }}>Nombre de cliente</th>
-                <th className="bg-light text-dark" style={{ width: "100px" }}>Costo</th>
-                <th className="bg-light text-dark" style={{ width: "300px" }}>Estado del trabajo</th>
-              </tr>
-            </thead>
-            <tbody>
+            <table
+              className="table table-bordered table-striped text-center"
+              style={{ width: "100%", tableLayout: "auto" }}
+            >
+              <thead style={{ position: "sticky", top: -1, backgroundColor: "#fff" }}>
+                <tr>
+                  <th className="bg-light text-dark" style={{ width: "200px" }}>
+                    Numero de trabajo
+                  </th>
+                  <th className="bg-light text-dark" style={{ width: "300px" }}>
+                    Nombre de trabajo
+                  </th>
+                  <th className="bg-light text-dark" style={{ width: "250px" }}>
+                    Nombre de cliente
+                  </th>
+                  <th className="bg-light text-dark" style={{ width: "100px" }}>
+                    Costo
+                  </th>
+                  <th className="bg-light text-dark" style={{ width: "300px" }}>
+                    Estado del trabajo
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
                 {trabajos.filter((trabajo) => trabajo.tipo_de_trabajo === 2).sort((a, b) => a.num_trabajo - b.num_trabajo).map((trabajo, index) => {
                     const cliente = clientes.find(
                       (cl) => cl.id === trabajo.cliente_id
@@ -178,7 +199,7 @@ const ResumenTopo= () => {
                     );
                   })}
               </tbody>
-          </table>
+            </table>
           )}
         </div>
       </div>

@@ -1,58 +1,49 @@
 import React, { useState, useEffect } from "react";
-import MenuAmojs from "./MenuTopo";
+import MenuTopo from "./MenuTopo";
 
 const ArrozTopo = () => {
   const [trabajos, setTrabajos] = useState([]);
-  const [loading, setLoading] = useState([]);
-  const [error, setError] = useState(null);
   const [clientes, setClientes] = useState([]);
-  const [clientesMap, setClientesMap] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [expandedState, setExpandedState] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
   const apiUrl =
     process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
 
-  // Estado para controlar la visibilidad del menú
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Función para cambiar el estado de visibilidad del menú
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const fetchClientes = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/api/clientes`);
-      if (!response.ok) {
-        throw new Error(`Error HTTP: ${response.status}`);
-      }
-      const data = await response.json();
-      setClientes(data); // Guardamos los clientes
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const fetchTrabajos = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/api/trabajos`);
-      if (!response.ok) {
-        throw new Error(`Error HTTP: ${response.status}`);
-      }
-      const data = await response.json();
-
-      // Filtrar los trabajos que tienen tipo_trabajo === 2
-      const trabajosFiltrados = data.filter(
-        (trabajo) => trabajo.tipo_de_trabajo === 2
-      );
-      setTrabajos(trabajosFiltrados);
-
-      setLoading(false);
-    } catch (err) {
-      setError(err.message);
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
+    const fetchClientes = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/api/clientes`);
+        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+        const data = await response.json();
+        setClientes(data);
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    const fetchTrabajos = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/api/trabajos`);
+        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+        const data = await response.json();
+        setTrabajos(data.filter((trabajo) => trabajo.tipo_de_trabajo === 2));
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
     fetchTrabajos();
     fetchClientes();
   }, []);
@@ -60,126 +51,142 @@ const ArrozTopo = () => {
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  // Función para obtener el nombre del cliente asociado
   const obtenerNombreCliente = (clienteId) => {
     const cliente = clientes.find((cl) => cl.id === clienteId);
-    if (!cliente) {
-      return "Desconocido";
-    }
-    return `${cliente.nombre} ${cliente.apellido}`;
+    return cliente ? `${cliente.nombre} ${cliente.apellido}` : "Desconocido";
   };
 
-  // Renderizar los trabajos filtrados por estado
-  // Renderizar los trabajos filtrados por estado
-  const renderTrabajosPorEstado = (estadoId) =>
-    trabajos
-      .filter((trabajo) => trabajo.estado_trabajo === estadoId)
-      .sort((a, b) => b.num_trabajo - a.num_trabajo) // Orden descendente por num_trabajo
-      .map((trabajo) => (
-        <p key={trabajo.id_trabajo}>
-          {trabajo.num_trabajo} - {trabajo.localidad} - {trabajo.nombre_trabajo}{" "}
-          - <strong>{obtenerNombreCliente(trabajo.cliente_id)}</strong> -{" "}
-          {trabajo.telefono_cliente}
-        </p>
-      ));
+  const estadoColores = {
+    2: "bg-danger text-white border-white",
+    3: "bg-warning text-dark",
+    4: "bg-info text-dark",
+    5: "bg-success text-white",
+    6: "bg-primary text-white",
+  };
 
-      
+  const renderTrabajosPorEstado = (estadoId) =>
+    isMobile ? (
+      <div className={`mb-3 p-2 rounded ${estadoColores[estadoId]}`}>
+        <button
+          className={`btn w-100 ${estadoColores[estadoId]}`} style={{ border: "none", fontSize: "20px" }}
+          onClick={() =>
+            setExpandedState(expandedState === estadoId ? null : estadoId)
+          }
+        >
+          {estadoId === 2
+            ? "Por hacer"
+            : estadoId === 3
+            ? "En progreso"
+            : estadoId === 4
+            ? "Por cobrar"
+            : estadoId === 5
+            ? "Para facturar"
+            : "Facturado"}
+        </button>
+        {expandedState === estadoId && (
+          <div className="mt-2 p-2">
+            {trabajos
+              .filter((trabajo) => trabajo.estado_trabajo === estadoId)
+              .sort((a, b) => b.num_trabajo - a.num_trabajo)
+              .map((trabajo) => (
+                <p key={trabajo.id_trabajo}>
+                  {trabajo.num_trabajo} - {trabajo.localidad} -{" "}
+                  {trabajo.nombre_trabajo} -{" "}
+                  <strong>{obtenerNombreCliente(trabajo.cliente_id)}</strong> -{" "}
+                  {trabajo.telefono_cliente}
+                </p>
+              ))}
+          </div>
+        )}
+      </div>
+    ) : (
+      <td className={estadoColores[estadoId]}>
+        {trabajos
+          .filter((trabajo) => trabajo.estado_trabajo === estadoId)
+          .sort((a, b) => b.num_trabajo - a.num_trabajo)
+          .map((trabajo) => (
+            <p key={trabajo.id_trabajo}>
+              {trabajo.num_trabajo} - {trabajo.localidad} -{" "}
+              {trabajo.nombre_trabajo} -{" "}
+              <strong>{obtenerNombreCliente(trabajo.cliente_id)}</strong> -{" "}
+              {trabajo.telefono_cliente}
+            </p>
+          ))}
+      </td>
+    );
+
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
       <div
         className="card p-4 p-md-2 shadow-lg text-center"
         style={{
-          width: "100%", // Esto asegura que el contenedor ocupe todo el ancho disponible en pantalla.
-          height: "90vh", // La altura sigue siendo un porcentaje de la altura del viewport.
-          maxWidth: "1200px", // Mantiene la proporción del contenedor sin que se estire más allá de este ancho
+          width: "100%",
+          height: "90vh",
+          maxWidth: "1200px",
           borderRadius: "20px",
           overflow: "hidden",
         }}
       >
-        {/* Header */}
         <div className="d-flex justify-content-between align-items-center mb-3">
           <img
             src="/images/logosdc.png"
             alt="Logo SDC"
-            style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-            }}
+            style={{ width: "100px", height: "100px", borderRadius: "50%" }}
           />
           <h1
             className="flex-grow-1 text-black text-center m-0"
-            style={{
-              fontSize: "24px",
-            }}
+            style={{ fontSize: "24px" }}
           >
             Arroz Topografia - Progreso
           </h1>
           <button
             className="me-3"
             style={{ background: "transparent", border: "none" }}
-            onClick={toggleMenu}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <i className="fas fa-bars" style={{ fontSize: "30px" }}></i>
           </button>
         </div>
-
-        {/* Contenedor con scroll horizontal */}
+        {isMenuOpen && <MenuTopo />}
         <div
           className="overflow-auto"
-          style={{
-            maxHeight: "75vh", // Se mantiene la altura máxima para el scroll vertical si es necesario
-            overflowX: "auto", // Permite el desplazamiento horizontal si el contenido excede el contenedor
-            whiteSpace: "nowrap", // Evita que el contenido se rompa en varias líneas
-            paddingRight: "10px",
-          }}
+          style={{ maxHeight: "75vh", paddingRight: "10px" }}
         >
-          {isMenuOpen && <MenuAmojs />}
-
-          {/* Tabla con contenido */}
-          <table
-            className="table table-bordered table-striped text-center"
-            style={{ width: "100%", tableLayout: "auto" }}
-          >
-            <thead>
-              <tr>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>
-                  Por hacer
-                </th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>
-                  En progreso
-                </th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>
-                  Por cobrar
-                </th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>
-                  Para facturar
-                </th>
-                <th className="bg-light text-dark" style={{ width: "350px" }}>
-                  Facturado
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="bg-danger text-white border-white">
+          {isMobile ? (
+            <div>
+              {renderTrabajosPorEstado(2)}
+              {renderTrabajosPorEstado(3)}
+              {renderTrabajosPorEstado(4)}
+              {renderTrabajosPorEstado(5)}
+              {renderTrabajosPorEstado(6)}
+            </div>
+          ) : (
+            <table
+              className="table table-bordered text-center"
+              style={{ width: "100%", tableLayout: "auto" }}
+            >
+              <thead
+                style={{ position: "sticky", top: -1, backgroundColor: "#fff" }}
+              >
+                <tr>
+                  <th className="bg-light text-dark">Por hacer</th>
+                  <th className="bg-light text-dark">En progreso</th>
+                  <th className="bg-light text-dark">Por cobrar</th>
+                  <th className="bg-light text-dark">Para facturar</th>
+                  <th className="bg-light text-dark">Facturado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
                   {renderTrabajosPorEstado(2)}
-                </td>
-                <td className="bg-warning text-dark">
                   {renderTrabajosPorEstado(3)}
-                </td>
-                <td className="bg-info text-dark">
                   {renderTrabajosPorEstado(4)}
-                </td>
-                <td className="bg-success text-white">
                   {renderTrabajosPorEstado(5)}
-                </td>
-                <td className="bg-primary text-white">
                   {renderTrabajosPorEstado(6)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </tr>
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>
