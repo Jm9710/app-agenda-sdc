@@ -1,1 +1,6 @@
 .env
+OBOB
+render.yaml
+Pipfile
+Pipfile.lock
+.txt
