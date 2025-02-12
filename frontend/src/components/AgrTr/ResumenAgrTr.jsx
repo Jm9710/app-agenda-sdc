@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from "react";
-import MenuAmojs from './MenuAgrTr';
+import React, { useState, useEffect } from "react";
+import MenuAmojs from "./MenuAgrTr";
 
 const ResumenAgrTr = () => {
   const [trabajos, setTrabajos] = useState([]);
@@ -8,9 +8,10 @@ const ResumenAgrTr = () => {
 
   const [clientes, setClientes] = useState([]);
   const [estados, setEstados] = useState([]);
-  
-  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
-  
+
+  const apiUrl =
+    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
+
   // Estado para controlar la visibilidad del menú
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -34,7 +35,6 @@ const ResumenAgrTr = () => {
       setLoading(false);
     }
   };
-  
 
   const fetchClientes = async () => {
     try {
@@ -73,9 +73,9 @@ const ResumenAgrTr = () => {
       <div
         className="card p-4 p-md-2 shadow-lg text-center"
         style={{
-          width: "100%",  // Esto asegura que el contenedor ocupe todo el ancho disponible en pantalla.
+          width: "100%", // Esto asegura que el contenedor ocupe todo el ancho disponible en pantalla.
           height: "90vh", // La altura sigue siendo un porcentaje de la altura del viewport.
-          maxWidth: "1200px", // Mantiene la proporción del contenedor sin que se estire más allá de este ancho
+          maxWidth: "95%", // Mantiene la proporción del contenedor sin que se estire más allá de este ancho
           borderRadius: "20px",
           overflow: "hidden",
         }}
@@ -99,11 +99,13 @@ const ResumenAgrTr = () => {
           >
             Agrimensura Tramites - Resumen de datos
           </h1>
-            <button className="me-3" style={{background: "transparent", border: "none"}}
+          <button
+            className="me-3"
+            style={{ background: "transparent", border: "none" }}
             onClick={toggleMenu}
-            >          
-              <i className="fas fa-bars" style={{ fontSize: "30px",}}
-          ></i></button>
+          >
+            <i className="fas fa-bars" style={{ fontSize: "30px" }}></i>
+          </button>
         </div>
 
         {/* Contenedor con scroll horizontal */}
@@ -116,7 +118,6 @@ const ResumenAgrTr = () => {
             paddingRight: "10px",
           }}
         >
-          
           {isMenuOpen && <MenuAmojs />}
 
           {/* Tabla con contenido */}
@@ -149,7 +150,26 @@ const ResumenAgrTr = () => {
                 </tr>
               </thead>
               <tbody>
-                {trabajos.filter((trabajo) => trabajo.tipo_de_trabajo === 3).sort((a, b) => a.num_trabajo - b.num_trabajo).map((trabajo, index) => {
+                {trabajos
+                  .filter((trabajo) => trabajo.tipo_de_trabajo === 3)
+                  .sort((a, b) => {
+                    const estadoA = estados.find(
+                      (est) => est.id_estado === a.estado_trabajo
+                    )?.tipo_estado;
+                    const estadoB = estados.find(
+                      (est) => est.id_estado === b.estado_trabajo
+                    )?.tipo_estado;
+
+                    // Prioriza los estados que no son "Cobrado"
+                    if (estadoA === "Cobrado" && estadoB !== "Cobrado")
+                      return 1;
+                    if (estadoA !== "Cobrado" && estadoB === "Cobrado")
+                      return -1;
+
+                    // Si ambos son iguales, ordena por número de trabajo
+                    return a.num_trabajo - b.num_trabajo;
+                  })
+                  .map((trabajo, index) => {
                     const cliente = clientes.find(
                       (cl) => cl.id === trabajo.cliente_id
                     );
@@ -175,7 +195,9 @@ const ResumenAgrTr = () => {
                           className="bg-light text-dark"
                           style={{ width: "250px" }}
                         >
-                          {cliente ? cliente.nombre + " " + cliente.apellido : "Cliente no encontrado"}
+                          {cliente
+                            ? cliente.nombre + " " + cliente.apellido
+                            : "Cliente no encontrado"}
                         </td>
                         <td
                           className="bg-light text-dark"
@@ -200,6 +222,5 @@ const ResumenAgrTr = () => {
     </div>
   );
 };
-
 
 export default ResumenAgrTr;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import ModalCliente from "./ModalCliente";
 import ModalGuardarTrabajo from "./ModalGuardarTrabajo";
@@ -30,8 +30,13 @@ const AgregarTrabajos = () => {
   const [selectedPlanilla, setSelectedPlanilla] = useState("");
   const [clientes, setClientes] = useState([]);
 
-  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
-  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null); // Referencia para el dropdown
+
+  const apiUrl =
+    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
+
   useEffect(() => {
     const fetchClientes = async () => {
       try {
@@ -48,9 +53,7 @@ const AgregarTrabajos = () => {
     };
     const fetchPlanillas = async () => {
       try {
-        const response = await fetch(
-          `${apiUrl}/api/tipo_de_trabajos`
-        );
+        const response = await fetch(`${apiUrl}/api/tipo_de_trabajos`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -64,9 +67,7 @@ const AgregarTrabajos = () => {
 
     const fetchUltimoNumeroTrabajo = async () => {
       try {
-        const response = await fetch(
-          `${apiUrl}/api/ultimo_numero_trabajo`
-        );
+        const response = await fetch(`${apiUrl}/api/ultimo_numero_trabajo`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -205,6 +206,35 @@ const AgregarTrabajos = () => {
       setLoading(false);
     }
   };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value.toLowerCase());
+  };
+
+  const handleClienteSelect = (id) => {
+    setCliente(id);
+    setIsDropdownOpen(false); // Cierra el menú al seleccionar
+  };
+
+  const filteredClientes = clientes.filter((clienteItem) =>
+    `${clienteItem.nombre} ${clienteItem.apellido} ${clienteItem.direccion}`
+      .toLowerCase()
+      .includes(searchTerm)
+  );
+
+  // Cierra el menú si se hace clic fuera del dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
@@ -387,23 +417,52 @@ const AgregarTrabajos = () => {
             />
           </div>
 
-          <div className="mb-3">
+          <div className="mb-3 position-relative" ref={dropdownRef}>
             <label htmlFor="cliente" className="form-label">
               Cliente
             </label>
-            <select
-              id="cliente"
-              className="form-select"
-              value={cliente}
-              onChange={handleClienteChange}
+            <div
+              className="form-select cursor-pointer"
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
             >
-              <option value="">Selecciona un cliente</option>
-              {clientes.map((clienteItem) => (
-                <option key={clienteItem.id} value={clienteItem.id}>
-                  {clienteItem.nombre} {clienteItem.apellido} {clienteItem.direccion}
-                </option>
-              ))}
-            </select>
+              {cliente
+                ? clientes.find((item) => item.id === cliente)?.nombre ||
+                  "Selecciona un cliente"
+                : "Selecciona un cliente"}
+            </div>
+            {isDropdownOpen && (
+              <div className="dropdown-menu show position-absolute w-100 border">
+                <div className="p-2">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Buscar cliente..."
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    autoFocus
+                  />
+                </div>
+                <ul className="list-unstyled mb-0">
+                  {filteredClientes.length > 0 ? (
+                    filteredClientes.map((clienteItem) => (
+                      <li
+                        key={clienteItem.id}
+                        className="dropdown-item"
+                        onClick={() => handleClienteSelect(clienteItem.id)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {clienteItem.nombre} {clienteItem.apellido}{" "}
+                        {clienteItem.direccion}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="dropdown-item text-muted">
+                      No se encontraron resultados
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
           </div>
 
           <div className="mb-3">

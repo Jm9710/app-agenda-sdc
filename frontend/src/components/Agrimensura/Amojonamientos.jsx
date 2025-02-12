@@ -122,7 +122,7 @@ const Amojonamientos = () => {
         style={{
           width: "100%",
           height: "90vh",
-          maxWidth: "1200px",
+          maxWidth: "95%",
           borderRadius: "20px",
           overflow: "hidden",
         }}

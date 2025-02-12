@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import MenuTopo from "./MenuTopo";
 
-const ResumenTopo= () => {
+const ResumenTopo = () => {
   const [trabajos, setTrabajos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -9,7 +9,8 @@ const ResumenTopo= () => {
   const [clientes, setClientes] = useState([]);
   const [estados, setEstados] = useState([]);
 
-  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+  const apiUrl =
+    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
 
   // Estado para controlar la visibilidad del menú
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,7 +35,6 @@ const ResumenTopo= () => {
       setLoading(false);
     }
   };
-  
 
   const fetchClientes = async () => {
     try {
@@ -75,7 +75,7 @@ const ResumenTopo= () => {
         style={{
           width: "100%",
           height: "90vh",
-          maxWidth: "1200px",
+          maxWidth: "95%",
           borderRadius: "20px",
           overflow: "hidden",
         }}
@@ -135,7 +135,9 @@ const ResumenTopo= () => {
               className="table table-bordered table-striped text-center"
               style={{ width: "100%", tableLayout: "auto" }}
             >
-              <thead style={{ position: "sticky", top: -1, backgroundColor: "#fff" }}>
+              <thead
+                style={{ position: "sticky", top: -1, backgroundColor: "#fff" }}
+              >
                 <tr>
                   <th className="bg-light text-dark" style={{ width: "200px" }}>
                     Numero de trabajo
@@ -155,7 +157,26 @@ const ResumenTopo= () => {
                 </tr>
               </thead>
               <tbody>
-                {trabajos.filter((trabajo) => trabajo.tipo_de_trabajo === 2).sort((a, b) => a.num_trabajo - b.num_trabajo).map((trabajo, index) => {
+                {trabajos
+                  .filter((trabajo) => trabajo.tipo_de_trabajo === 2)
+                  .sort((a, b) => {
+                    const estadoA = estados.find(
+                      (est) => est.id_estado === a.estado_trabajo
+                    )?.tipo_estado;
+                    const estadoB = estados.find(
+                      (est) => est.id_estado === b.estado_trabajo
+                    )?.tipo_estado;
+
+                    // Prioriza los estados que no son "Cobrado"
+                    if (estadoA === "Cobrado" && estadoB !== "Cobrado")
+                      return 1;
+                    if (estadoA !== "Cobrado" && estadoB === "Cobrado")
+                      return -1;
+
+                    // Si ambos son iguales, ordena por número de trabajo
+                    return a.num_trabajo - b.num_trabajo;
+                  })
+                  .map((trabajo, index) => {
                     const cliente = clientes.find(
                       (cl) => cl.id === trabajo.cliente_id
                     );
@@ -181,7 +202,9 @@ const ResumenTopo= () => {
                           className="bg-light text-dark"
                           style={{ width: "250px" }}
                         >
-                          {cliente ? cliente.nombre + " " + cliente.apellido: "Cliente no encontrado"}
+                          {cliente
+                            ? cliente.nombre + " " + cliente.apellido
+                            : "Cliente no encontrado"}
                         </td>
                         <td
                           className="bg-light text-dark"

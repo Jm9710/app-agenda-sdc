@@ -39,9 +39,9 @@ const Clientes = () => {
       <div
         className="card p-4 p-md-2 shadow-lg text-center"
         style={{
-          width: "100%",
-          height: "90vh",
-          maxWidth: "1200px",
+          width: "100%", // Esto asegura que el contenedor ocupe todo el ancho disponible en pantalla.
+          height: "90vh", // La altura sigue siendo un porcentaje de la altura del viewport.
+          maxWidth: "95%", // Mantiene la proporción del contenedor sin que se estire más allá de este ancho
           borderRadius: "20px",
           overflow: "hidden",
         }}
@@ -91,9 +91,13 @@ const Clientes = () => {
             <p>Error: {error}</p>
           ) : (
             <table
-              className="table table-bordered table-striped text-center"
-              style={{ width: "100%", tableLayout: "fixed" }}
-            >
+            className="table table-bordered table-striped text-center"
+            style={{
+              borderCollapse: "collapse",
+              width: "100%",
+              minWidth: "500px", // Para evitar que la tabla colapse en tamaños pequeños
+            }}
+          >
               <thead>
                 <tr>
                   <th className="bg-light text-dark" style={{ width: "300px" }}>
