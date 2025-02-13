@@ -111,7 +111,7 @@ class Trabajo(db.Model):
     iva = db.Column(db.Boolean, default=False)
     comentarios = db.Column(db.String(1000))
     estado_trabajo = db.Column(db.Integer, db.ForeignKey('estado.id_estado'))
-
+    
     # Relaciones
     tipo_trabajo_rel = db.relationship("TipoTrabajo", back_populates="trabajos")
     estado_rel = db.relationship("Estado", back_populates="trabajos")

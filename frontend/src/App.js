@@ -17,6 +17,8 @@ import ResumenTopo from "./components/ArrozTopo/ResumenTopo"
 import EdicionAgrTr from "./components/AgrTr/EdicionAgrTr"
 import ResumenAgrTr from "./components/AgrTr/ResumenAgrTr"
 import Clientes from "./components/Clientes";
+import Contabilidad from "./components/Contabilidad/contabilidad";
+
 
 const App = () => {
   const location = useLocation(); // Obtiene la ubicación actual
@@ -69,6 +71,8 @@ const App = () => {
       case "/clientes":
         document.title = "Clientes - SDC Agenda";
         break;
+      case "/contabilidad":
+        document.title = "Contabilidad - SDC Agenda";
       default:
         document.title = "SDC Agenda";
     }
@@ -91,6 +95,7 @@ const App = () => {
       <Route path="/edicion-AgrTr" element={<EdicionAgrTr />} />
       <Route path="/resumen-AgrTr" element={<ResumenAgrTr />} />
       <Route path="/clientes" element={<Clientes />} />
+      <Route path="/contabilidad" element={<Contabilidad />} />
     </Routes>
   );
 };

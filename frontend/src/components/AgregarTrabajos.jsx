@@ -87,23 +87,6 @@ const AgregarTrabajos = () => {
     setSelectedPlanilla(e.target.value);
   };
 
-  const handleClienteChange = (e) => {
-    const id = e.target.value;
-    setCliente(id);
-
-    // Cambia `id` por el atributo real del backend (por ejemplo, `id_cliente`)
-    const selectedCliente = clientes.find(
-      (cliente) => cliente.id === parseInt(id)
-    );
-
-    if (selectedCliente) {
-      setTelefono(selectedCliente.telefono || ""); // Asigna el teléfono si se encuentra
-    } else {
-      console.warn("Cliente no encontrado");
-      setTelefono(""); // Limpia el teléfono si no se encuentra
-    }
-  };
-
   if (error) {
     alert(error);
   }
@@ -212,7 +195,20 @@ const AgregarTrabajos = () => {
   };
 
   const handleClienteSelect = (id) => {
+    
     setCliente(id);
+
+    // Cambia `id` por el atributo real del backend (por ejemplo, `id_cliente`)
+    const selectedCliente = clientes.find(
+      (cliente) => cliente.id === parseInt(id)
+    );
+
+    if (selectedCliente) {
+      setTelefono(selectedCliente.telefono || ""); // Asigna el teléfono si se encuentra
+    } else {
+      console.warn("Cliente no encontrado");
+      setTelefono(""); // Limpia el teléfono si no se encuentra
+    }
     setIsDropdownOpen(false); // Cierra el menú al seleccionar
   };
 
@@ -426,8 +422,11 @@ const AgregarTrabajos = () => {
               onClick={() => setIsDropdownOpen((prev) => !prev)}
             >
               {cliente
-                ? clientes.find((item) => item.id === cliente)?.nombre ||
-                  "Selecciona un cliente"
+                ? `${
+                    clientes.find((item) => item.id === cliente)?.nombre || ""
+                  } ${
+                    clientes.find((item) => item.id === cliente)?.apellido || ""
+                  }`.trim() || "Selecciona un cliente"
                 : "Selecciona un cliente"}
             </div>
             {isDropdownOpen && (
@@ -473,7 +472,7 @@ const AgregarTrabajos = () => {
               type="text"
               id="telefono"
               className="form-control"
-              value={telefono || ""} // Aseguramos que se muestra como una cadena
+              value={telefono || ""} // Mostrar el número de teléfono como texto
               disabled
             />
           </div>

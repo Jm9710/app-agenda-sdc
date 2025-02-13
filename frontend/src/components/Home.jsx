@@ -25,6 +25,7 @@ const Home = () => {
           <Link to="/arroz-topografia" className="btn btn-outline-dark fw-bolder p-2" >Arroz topografía</Link>
           <Link to="/agrimensura-tramites" className="btn btn-outline-dark fw-bolder p-2" >Agrimensura trámites</Link>
           <Link to="/Clientes" className="btn btn-outline-dark fw-bolder p-2" >Ver clientes</Link>
+          <Link to="/Contabilidad" className="btn btn-outline-dark fw-bolder p-2" >Contabilidad</Link>
         </div>
       </div>
     </div>
