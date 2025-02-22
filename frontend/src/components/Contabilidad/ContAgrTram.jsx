@@ -299,7 +299,6 @@ const ContAmoj = () => {
             </button>
           </div>
 
-          {isMenuOpen && <MenuAmojs />}
 
           {/* Tabla con contenido */}
           {loading ? (
