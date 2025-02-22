@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import MenuTopo from "./MenuTopo";
 
-const ResumenTopo = () => {
+const Amojonamientos = () => {
   const [trabajos, setTrabajos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -9,8 +9,9 @@ const ResumenTopo = () => {
   const [clientes, setClientes] = useState([]);
   const [estados, setEstados] = useState([]);
 
-  const apiUrl =
-    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+
+  //const apiUrl = process.env.BACKEND_URL || 'http://127.0.0.1:3001';
 
   // Estado para controlar la visibilidad del menú
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -97,7 +98,7 @@ const ResumenTopo = () => {
               fontSize: "24px",
             }}
           >
-            Arroz Topografia - Resumen de datos
+            Arroz topografia - Resumen de datos
           </h1>
           <button
             className="me-3"
@@ -149,6 +150,9 @@ const ResumenTopo = () => {
                     Nombre de cliente
                   </th>
                   <th className="bg-light text-dark" style={{ width: "100px" }}>
+                    Moneda
+                  </th>
+                  <th className="bg-light text-dark" style={{ width: "100px" }}>
                     Costo
                   </th>
                   <th className="bg-light text-dark" style={{ width: "300px" }}>
@@ -167,10 +171,10 @@ const ResumenTopo = () => {
                       (est) => est.id_estado === b.estado_trabajo
                     )?.tipo_estado;
 
-                    // Prioriza los estados que no son "Cobrado"
-                    if (estadoA === "Cobrado" && estadoB !== "Cobrado")
+                    // Prioriza los estados que no son "Finalizado"
+                    if (estadoA === "Finalizado" && estadoB !== "Finalizado")
                       return 1;
-                    if (estadoA !== "Cobrado" && estadoB === "Cobrado")
+                    if (estadoA !== "Finalizado" && estadoB === "Finalizado")
                       return -1;
 
                     // Si ambos son iguales, ordena por número de trabajo
@@ -181,7 +185,7 @@ const ResumenTopo = () => {
                       (cl) => cl.id === trabajo.cliente_id
                     );
                     const estado = estados.find(
-                      (est) => est.id_estado === trabajo.estado_trabajo
+                      (est) => est.id_estado === trabajo.estado
                     );
 
                     return (
@@ -210,6 +214,12 @@ const ResumenTopo = () => {
                           className="bg-light text-dark"
                           style={{ width: "100px" }}
                         >
+                          {trabajo.moneda}
+                        </td>
+                        <td
+                          className="bg-light text-dark"
+                          style={{ width: "100px" }}
+                        >
                           {trabajo.costo}
                         </td>
                         <td
@@ -230,4 +240,4 @@ const ResumenTopo = () => {
   );
 };
 
-export default ResumenTopo;
+export default Amojonamientos;

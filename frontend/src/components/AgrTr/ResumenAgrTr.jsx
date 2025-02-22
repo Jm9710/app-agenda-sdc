@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import MenuAmojs from "./MenuAgrTr";
+import MenuAgrTr from "./MenuAgrTr";
 
-const ResumenAgrTr = () => {
+const Amojonamientos = () => {
   const [trabajos, setTrabajos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -9,8 +10,9 @@ const ResumenAgrTr = () => {
   const [clientes, setClientes] = useState([]);
   const [estados, setEstados] = useState([]);
 
-  const apiUrl =
-    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+
+  //const apiUrl = process.env.BACKEND_URL || 'http://127.0.0.1:3001';
 
   // Estado para controlar la visibilidad del menú
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -73,9 +75,9 @@ const ResumenAgrTr = () => {
       <div
         className="card p-4 p-md-2 shadow-lg text-center"
         style={{
-          width: "100%", // Esto asegura que el contenedor ocupe todo el ancho disponible en pantalla.
-          height: "90vh", // La altura sigue siendo un porcentaje de la altura del viewport.
-          maxWidth: "95%", // Mantiene la proporción del contenedor sin que se estire más allá de este ancho
+          width: "100%",
+          height: "90vh",
+          maxWidth: "95%",
           borderRadius: "20px",
           overflow: "hidden",
         }}
@@ -104,7 +106,12 @@ const ResumenAgrTr = () => {
             style={{ background: "transparent", border: "none" }}
             onClick={toggleMenu}
           >
-            <i className="fas fa-bars" style={{ fontSize: "30px" }}></i>
+            <i
+              className="fas fa-bars"
+              style={{
+                fontSize: "30px",
+              }}
+            ></i>
           </button>
         </div>
 
@@ -112,13 +119,13 @@ const ResumenAgrTr = () => {
         <div
           className="overflow-auto"
           style={{
-            maxHeight: "75vh", // Se mantiene la altura máxima para el scroll vertical si es necesario
-            overflowX: "auto", // Permite el desplazamiento horizontal si el contenido excede el contenedor
-            whiteSpace: "nowrap", // Evita que el contenido se rompa en varias líneas
+            maxHeight: "75vh",
+            overflowX: "auto",
+            whiteSpace: "nowrap",
             paddingRight: "10px",
           }}
         >
-          {isMenuOpen && <MenuAmojs />}
+          {isMenuOpen && <MenuAgrTr />}
 
           {/* Tabla con contenido */}
           {loading ? (
@@ -130,7 +137,9 @@ const ResumenAgrTr = () => {
               className="table table-bordered table-striped text-center"
               style={{ width: "100%", tableLayout: "auto" }}
             >
-              <thead>
+              <thead
+                style={{ position: "sticky", top: -1, backgroundColor: "#fff" }}
+              >
                 <tr>
                   <th className="bg-light text-dark" style={{ width: "200px" }}>
                     Numero de trabajo
@@ -140,6 +149,9 @@ const ResumenAgrTr = () => {
                   </th>
                   <th className="bg-light text-dark" style={{ width: "250px" }}>
                     Nombre de cliente
+                  </th>
+                  <th className="bg-light text-dark" style={{ width: "100px" }}>
+                    Moneda
                   </th>
                   <th className="bg-light text-dark" style={{ width: "100px" }}>
                     Costo
@@ -160,10 +172,10 @@ const ResumenAgrTr = () => {
                       (est) => est.id_estado === b.estado_trabajo
                     )?.tipo_estado;
 
-                    // Prioriza los estados que no son "Cobrado"
-                    if (estadoA === "Cobrado" && estadoB !== "Cobrado")
+                    // Prioriza los estados que no son "Finalizado"
+                    if (estadoA === "Finalizado" && estadoB !== "Finalizado")
                       return 1;
-                    if (estadoA !== "Cobrado" && estadoB === "Cobrado")
+                    if (estadoA !== "Finalizado" && estadoB === "Finalizado")
                       return -1;
 
                     // Si ambos son iguales, ordena por número de trabajo
@@ -174,7 +186,7 @@ const ResumenAgrTr = () => {
                       (cl) => cl.id === trabajo.cliente_id
                     );
                     const estado = estados.find(
-                      (est) => est.id_estado === trabajo.estado_trabajo
+                      (est) => est.id_estado === trabajo.estado
                     );
 
                     return (
@@ -203,6 +215,12 @@ const ResumenAgrTr = () => {
                           className="bg-light text-dark"
                           style={{ width: "100px" }}
                         >
+                          {trabajo.moneda}
+                        </td>
+                        <td
+                          className="bg-light text-dark"
+                          style={{ width: "100px" }}
+                        >
                           {trabajo.costo}
                         </td>
                         <td
@@ -223,4 +241,4 @@ const ResumenAgrTr = () => {
   );
 };
 
-export default ResumenAgrTr;
+export default Amojonamientos;

@@ -14,8 +14,9 @@ const Amojonamientos = () => {
   const [zoom, setZoom] = useState(1);
   const [maxHeight, setMaxHeight] = useState("600px");
 
-  const apiUrl =
-    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+
+  //const apiUrl = process.env.BACKEND_URL || "http://127.0.0.1:3001";
 
   // Toggle de menú
   const toggleMenu = () => {
@@ -112,20 +113,23 @@ const Amojonamientos = () => {
         throw new Error("Error al guardar los cambios");
       }
 
-      // Actualizamos la lista de trabajos
-      const fetchTrabajos = async () => {
-        const trabajosResponse = await fetch(`${apiUrl}/api/trabajos`);
-        const trabajosData = await trabajosResponse.json();
-        setTrabajos(trabajosData); // Actualizamos la lista de trabajos en el estado
-      };
-
-      await fetchTrabajos(); // Recargamos la lista de trabajos
+      // Actualizamos el trabajo en la lista sin necesidad de hacer otra consulta
+      setTrabajos((prevTrabajos) =>
+        prevTrabajos.map((trabajo) =>
+          trabajo.id_trabajo === selectedTrabajo.id_trabajo
+            ? selectedTrabajo
+            : trabajo
+        )
+      );
 
       window.alert("¡El trabajo se ha editado con éxito!"); // Mostrar mensaje de éxito
       setSelectedTrabajo(null); // Cerrar el formulario de edición
     } catch (err) {
       setError("Error al guardar los cambios: " + err.message);
     }
+
+    // Después de guardar los cambios, recargar la página
+    window.location.reload();
   };
 
   // Funciones para cargar los datos
@@ -219,7 +223,7 @@ const Amojonamientos = () => {
               fontSize: "24px",
             }}
           >
-            Amojonamientos - Edicion de datos
+            Amojs y DJCU - Edicion de datos
           </h1>
           <button
             className="me-3"
@@ -396,24 +400,6 @@ const Amojonamientos = () => {
                       className="bg-light text-dark"
                       style={{ width: "150px" }}
                     >
-                      Moneda
-                    </th>
-                    <th
-                      className="bg-light text-dark"
-                      style={{ width: "150px" }}
-                    >
-                      Costo
-                    </th>
-                    <th
-                      className="bg-light text-dark"
-                      style={{ width: "150px" }}
-                    >
-                      Iva
-                    </th>
-                    <th
-                      className="bg-light text-dark"
-                      style={{ width: "150px" }}
-                    >
                       Estado de trabajo
                     </th>
                   </tr>
@@ -434,7 +420,7 @@ const Amojonamientos = () => {
                         (cl) => cl.id === trabajo.cliente_id
                       );
                       const estado = estados.find(
-                        (est) => est.id_estado === trabajo.estado_trabajo
+                        (est) => est.id_estado === trabajo.estado
                       );
                       const tipoTrabajo = tiposDeTrabajo.find(
                         (tipo) => tipo.id === trabajo.nombre_tipo_trabajo
@@ -539,34 +525,6 @@ const Amojonamientos = () => {
                             className="bg-light text-dark"
                             style={{ width: "150px" }}
                           >
-                            {trabajo.moneda}
-                          </td>
-                          <td
-                            className="bg-light text-dark"
-                            style={{ width: "150px" }}
-                          >
-                            {trabajo.costo}
-                          </td>
-                          <td
-                            className="bg-light text-dark"
-                            style={{ width: "150px" }}
-                          >
-                            {trabajo.iva ? (
-                              <i
-                                className="fas fa-check"
-                                style={{ color: "green" }}
-                              ></i> // Tick verde
-                            ) : (
-                              <i
-                                className="fas fa-times"
-                                style={{ color: "red" }}
-                              ></i> // X roja
-                            )}
-                          </td>
-                          <td
-                            className="bg-light text-dark"
-                            style={{ width: "150px" }}
-                          >
                             {" "}
                             {estado
                               ? estado.tipo_estado
@@ -614,85 +572,51 @@ const Amojonamientos = () => {
                           }
                         />
                       </div>
-                      <div className="mb-3">
-                        <label className="form-label">Manzana</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={selectedTrabajo.manzana}
-                          onChange={(e) =>
-                            setSelectedTrabajo({
-                              ...selectedTrabajo,
-                              manzana: e.target.value,
-                            })
-                          }
-                        />
+                      <div className="mb-3 row">
+                        <div className="col">
+                          <label className="form-label">Manzana</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={selectedTrabajo.manzana}
+                            onChange={(e) =>
+                              setSelectedTrabajo({
+                                ...selectedTrabajo,
+                                manzana: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="col">
+                          <label className="form-label">Solar</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={selectedTrabajo.solar}
+                            onChange={(e) =>
+                              setSelectedTrabajo({
+                                ...selectedTrabajo,
+                                solar: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="col">
+                          <label className="form-label">Padron</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={selectedTrabajo.padron}
+                            onChange={(e) =>
+                              setSelectedTrabajo({
+                                ...selectedTrabajo,
+                                padron: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
                       </div>
-                      <div className="mb-3">
-                        <label className="form-label">Solar</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={selectedTrabajo.solar}
-                          onChange={(e) =>
-                            setSelectedTrabajo({
-                              ...selectedTrabajo,
-                              solar: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">Padron</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={selectedTrabajo.padron}
-                          onChange={(e) =>
-                            setSelectedTrabajo({
-                              ...selectedTrabajo,
-                              padron: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">Costo</label>
-                        <input
-                          type="number"
-                          className="form-control"
-                          value={selectedTrabajo.costo}
-                          onChange={(e) =>
-                            setSelectedTrabajo({
-                              ...selectedTrabajo,
-                              costo: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label">IVA</label>
-                        <input
-                          type="checkbox"
-                          checked={selectedTrabajo.iva} // Si está marcado, se aplica el cálculo del IVA
-                          onChange={(e) => {
-                            const isChecked = e.target.checked;
-                            const updatedCosto = isChecked
-                              ? selectedTrabajo.costo * 1.22 // Aplica el IVA del 21% si está marcado
-                              : selectedTrabajo.costo / 1.22; // Vuelve al costo original si no está marcado
-                            setSelectedTrabajo({
-                              ...selectedTrabajo,
-                              iva: isChecked,
-                              costo: updatedCosto.toFixed(2), // Ajusta el costo con IVA y lo formatea
-                            });
-                          }}
-                        />
-                        {selectedTrabajo.iva && (
-                          <small className="form-text text-muted">
-                            IVA calculado: 22%
-                          </small>
-                        )}
-                      </div>
+
                       <div className="mb-3">
                         <label className="form-label">Comentarios</label>
                         <textarea
@@ -711,11 +635,11 @@ const Amojonamientos = () => {
                         <label className="form-label">Estado de trabajo</label>
                         <select
                           className="form-control"
-                          value={selectedTrabajo.estado_trabajo}
+                          value={selectedTrabajo.estado}
                           onChange={(e) =>
                             setSelectedTrabajo({
                               ...selectedTrabajo,
-                              estado_trabajo: e.target.value,
+                              estado: e.target.value,
                             })
                           }
                         >

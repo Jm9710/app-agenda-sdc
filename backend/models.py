@@ -31,7 +31,7 @@ class Cliente(db.Model):
     apellido = db.Column(db.String(20), nullable=False)
     cedula = db.Column(db.String(20), nullable=False)
     direccion = db.Column(db.String(100))
-    telefono = db.Column(db.String(15))
+    telefono = db.Column(db.String(30))
     actualizado_por = db.Column(db.Integer, db.ForeignKey('usuarios.id_us'))
 
     # Relaciones
@@ -53,7 +53,7 @@ class Cliente(db.Model):
         }
 
 
-# Modelo Estado
+# Modelo Estado Trabajo
 class Estado(db.Model):
     __tablename__ = 'estado'
 
@@ -64,11 +64,26 @@ class Estado(db.Model):
     trabajos = db.relationship("Trabajo", back_populates="estado_rel")
 
     def __repr__(self):
-        return f'Estado {self.id_estado} {self.tipo_estado}'
+        return f'Estado{self.id_estado} {self.tipo_estado}'
 
     def serialize(self):
         return {"id_estado": self.id_estado, "tipo_estado": self.tipo_estado}
 
+# Modelo Estado Contable
+class Estado_Contable(db.Model):
+    __tablename__ = 'estado_contable'
+
+    id_estado_contable = db.Column(db.Integer, primary_key=True)
+    tipo_estado_contable = db.Column(db.String(20), nullable=False)
+
+    # Relación con Trabajo
+    trabajos = db.relationship("Trabajo", back_populates="estado_contable_rel")
+
+    def __repr__(self):
+        return f'Estado_Contable {self.id_estado_contable} {self.tipo_estado_contable}'
+
+    def serialize(self):
+        return {"id_estado_contable": self.id_estado_contable, "tipo_estado_contable": self.tipo_estado_contable}
 
 # Modelo TipoTrabajo
 class TipoTrabajo(db.Model):
@@ -108,13 +123,17 @@ class Trabajo(db.Model):
     telefono_cliente = db.Column(db.String(15))
     moneda = db.Column(db.String(10))
     costo = db.Column(db.String(10))
+    entrego = db.Column(db.String(10))
+    deuda = db.Column(db.String(10))
     iva = db.Column(db.Boolean, default=False)
     comentarios = db.Column(db.String(1000))
-    estado_trabajo = db.Column(db.Integer, db.ForeignKey('estado.id_estado'))
-    
+    estado = db.Column(db.Integer, db.ForeignKey('estado.id_estado'))
+    estado_contable = db.Column(db.Integer, db.ForeignKey('estado_contable.id_estado_contable'))
+
     # Relaciones
     tipo_trabajo_rel = db.relationship("TipoTrabajo", back_populates="trabajos")
     estado_rel = db.relationship("Estado", back_populates="trabajos")
+    estado_contable_rel = db.relationship("Estado_Contable", back_populates="trabajos")
     cliente_rel = db.relationship("Cliente", back_populates="trabajos")
 
     def __repr__(self):
@@ -136,7 +155,11 @@ class Trabajo(db.Model):
             "telefono_cliente": self.telefono_cliente,
             "moneda": self.moneda,
             "costo": self.costo,
+            "entrego": self.entrego,
+            "deuda": self.deuda,
             "iva": self.iva,
             "comentarios": self.comentarios,
-            "estado_trabajo": self.estado_trabajo
+            "estado": self.estado,
+            "estado_contable": self.estado_contable
         }
+

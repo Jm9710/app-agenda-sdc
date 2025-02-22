@@ -34,8 +34,9 @@ const AgregarTrabajos = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null); // Referencia para el dropdown
 
-  const apiUrl =
-    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+
+  //const apiUrl = process.env.BACKEND_URL || 'http://127.0.0.1:3001';
 
   useEffect(() => {
     const fetchClientes = async () => {
@@ -518,6 +519,7 @@ const AgregarTrabajos = () => {
               Incluir IVA
             </label>
           </div>
+
 
           <div className="mb-3">
             <label htmlFor="comentarios" className="form-label">

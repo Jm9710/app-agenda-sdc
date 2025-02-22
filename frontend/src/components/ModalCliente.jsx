@@ -12,6 +12,8 @@ const [error, setError] = useState("");
 
 const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
 
+//const apiUrl = process.env.BACKEND_URL || 'http://127.0.0.1:3001';
+
 const handleSubmit = async (e) => {
   e.preventDefault();
 

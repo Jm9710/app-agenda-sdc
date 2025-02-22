@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import MenuTopo from "./MenuTopo";
+import { Link } from "react-router-dom";
 
-const Amojonamientos = () => {
+const ContAmoj = () => {
   const [trabajos, setTrabajos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,7 +16,7 @@ const Amojonamientos = () => {
 
   const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
 
-  //const apiUrl = process.env.BACKEND_URL || "http://127.0.0.1:3001";
+  //const apiUrl = process.env.BACKEND_URL || 'http://127.0.0.1:3001';
 
   // Toggle de menú
   const toggleMenu = () => {
@@ -27,7 +27,7 @@ const Amojonamientos = () => {
     // Obtener los estados disponibles desde la API
     const fetchEstados = async () => {
       try {
-        const response = await fetch(`${apiUrl}/api/estados`);
+        const response = await fetch(`${apiUrl}/api/estados_contables`);
         if (!response.ok) {
           throw new Error("No se pudieron obtener los estados.");
         }
@@ -62,50 +62,50 @@ const Amojonamientos = () => {
     fetchEstados();
   }, []);
 
-  // Función para eliminar un trabajo
-  const handleDelete = async (id) => {
-    // Mostrar una alerta de confirmación
-    const confirmDelete = window.confirm(
-      "¿Estás seguro de que deseas eliminar este trabajo?"
-    );
-
-    if (!confirmDelete) {
-      // Si el usuario cancela, no hacemos nada
-      return;
-    }
-
-    try {
-      const response = await fetch(`${apiUrl}/api/trabajos/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        const errorMessage = await response.text();
-        console.error("Error al eliminar:", errorMessage);
-        throw new Error(`Error al eliminar el trabajo: ${response.statusText}`);
-      }
-      // Actualizamos el estado para reflejar el trabajo eliminado
-      setTrabajos(trabajos.filter((trabajo) => trabajo.id_trabajo !== id));
-    } catch (err) {
-      setError("Error al eliminar el trabajo: " + err.message);
-    }
-  };
-
   // Función para editar un trabajo (abre el formulario con los datos del trabajo)
   const handleEdit = (trabajo) => {
-    setSelectedTrabajo(trabajo);
+    // Calculamos la deuda si no está definida, restando lo entregado al costo
+    const deudaCalculada =
+      trabajo.deuda !== undefined
+        ? trabajo.deuda
+        : trabajo.costo - trabajo.entrego;
+
+    setSelectedTrabajo({
+      ...trabajo,
+      deuda: deudaCalculada, // Deuda calculada si no está definida
+      entrego: trabajo.entrego || 0, // Inicializar entrego si no está definido
+    });
   };
 
   const handleSaveEdit = async (event) => {
     event.preventDefault();
+
+    const updatedTrabajo = { ...selectedTrabajo };
+
+    // Restar el monto de entrega de la deuda
+    updatedTrabajo.deuda = updatedTrabajo.costo - updatedTrabajo.entrego;
+
+    // Si la deuda es menor o igual a 0, y si no hay un estado seleccionado,
+    // permite elegir entre los estados 3, 4 y 5
+    if (updatedTrabajo.deuda <= 0) {
+      updatedTrabajo.deuda = 0; // Asegurarse de que la deuda no sea negativa
+
+      // Solo asignar el estado a "Cobrado" si no se selecciona otro estado
+      if (!updatedTrabajo.estado_contable) {
+        updatedTrabajo.estado_contable = 4; // Cobrado
+      }
+    }
+
     try {
+      // Hacer el PUT request para guardar los cambios
       const response = await fetch(
-        `${apiUrl}/api/trabajos/${selectedTrabajo.id_trabajo}`,
+        `${apiUrl}/api/trabajos/${updatedTrabajo.id_trabajo}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(selectedTrabajo),
+          body: JSON.stringify(updatedTrabajo),
         }
       );
 
@@ -113,21 +113,20 @@ const Amojonamientos = () => {
         throw new Error("Error al guardar los cambios");
       }
 
-      // Actualizamos el trabajo en la lista sin necesidad de hacer otra consulta
-      setTrabajos((prevTrabajos) =>
-        prevTrabajos.map((trabajo) =>
-          trabajo.id_trabajo === selectedTrabajo.id_trabajo
-            ? selectedTrabajo
+      // Actualizar el estado de todos los trabajos con la deuda recalculada
+      setTrabajos((prevTrabajos) => {
+        return prevTrabajos.map((trabajo) =>
+          trabajo.id_trabajo === updatedTrabajo.id_trabajo
+            ? updatedTrabajo
             : trabajo
-        )
-      );
+        );
+      });
 
-      window.alert("¡El trabajo se ha editado con éxito!"); // Mostrar mensaje de éxito
-      setSelectedTrabajo(null); // Cerrar el formulario de edición
+      window.alert("¡El trabajo se ha editado con éxito!");
+      setSelectedTrabajo(null); // Cerrar el formulario
     } catch (err) {
       setError("Error al guardar los cambios: " + err.message);
     }
-
     // Después de guardar los cambios, recargar la página
     window.location.reload();
   };
@@ -163,7 +162,7 @@ const Amojonamientos = () => {
 
   const fetchEstados = async () => {
     try {
-      const response = await fetch(`${apiUrl}/api/estados`);
+      const response = await fetch(`${apiUrl}/api/estados_contables`);
       if (!response.ok) {
         throw new Error(`Error HTTP: ${response.status}`);
       }
@@ -208,30 +207,41 @@ const Amojonamientos = () => {
       >
         {/* Header */}
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <img
-            src="/images/logosdc.png"
-            alt="Logo SDC"
-            style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-            }}
-          />
+          <Link to="/home">
+            <img
+              src="/images/logosdc.png"
+              alt="Logo SDC"
+              style={{
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+              }}
+            />
+          </Link>
           <h1
             className="flex-grow-1 text-black text-center m-0"
             style={{
               fontSize: "24px",
             }}
           >
-            Arroz Topografia - Edicion de datos
+            Amojonamientos y DJCU - Contabilidad
           </h1>
-          <button
-            className="me-3"
-            style={{ background: "transparent", border: "none" }}
-            onClick={toggleMenu}
-          >
-            <i className="fas fa-bars" style={{ fontSize: "30px" }}></i>
-          </button>
+          <div className="d-flex justify-content-end">
+            <Link
+              to="/menu-contabilidad"
+              className="btn btn-outline-dark fw-bolder p-2"
+            >
+              Volver
+            </Link>
+          </div>
+          <div className="d-flex justify-content-end">
+            <Link
+              to="/progreso-amojs"
+              className="btn btn-outline-dark fw-bolder p-2"
+            >
+              Ir a progreso
+            </Link>
+          </div>
         </div>
 
         {/* Contenedor con scroll horizontal */}
@@ -288,8 +298,6 @@ const Amojonamientos = () => {
               Restablecer Zoom
             </button>
           </div>
-
-          {isMenuOpen && <MenuTopo />}
 
           {/* Tabla con contenido */}
           {loading ? (
@@ -359,42 +367,42 @@ const Amojonamientos = () => {
                     >
                       Nombre de trabajo
                     </th>
-                    <th
-                      className="bg-light text-dark"
-                      style={{ width: "150px" }}
-                    >
-                      Localidad
-                    </th>
-                    <th
-                      className="bg-light text-dark"
-                      style={{ width: "100px" }}
-                    >
-                      Manzana
-                    </th>
-                    <th
-                      className="bg-light text-dark"
-                      style={{ width: "100px" }}
-                    >
-                      Solar
-                    </th>
-                    <th
-                      className="bg-light text-dark"
-                      style={{ width: "100px" }}
-                    >
-                      Padron
-                    </th>
-                    <th
-                      className="bg-light text-dark"
-                      style={{ width: "150px" }}
-                    >
-                      Departamento
-                    </th>
 
                     <th
                       className="bg-light text-dark"
                       style={{ width: "250px" }}
                     >
                       Telefono cliente
+                    </th>
+                    <th
+                      className="bg-light text-dark"
+                      style={{ width: "150px" }}
+                    >
+                      Moneda
+                    </th>
+                    <th
+                      className="bg-light text-dark"
+                      style={{ width: "150px" }}
+                    >
+                      Costo
+                    </th>
+                    <th
+                      className="bg-light text-dark"
+                      style={{ width: "150px" }}
+                    >
+                      Iva
+                    </th>
+                    <th
+                      className="bg-light text-dark"
+                      style={{ width: "150px" }}
+                    >
+                      Entrego
+                    </th>
+                    <th
+                      className="bg-light text-dark"
+                      style={{ width: "150px" }}
+                    >
+                      Deuda
                     </th>
                     <th
                       className="bg-light text-dark"
@@ -408,23 +416,24 @@ const Amojonamientos = () => {
                   {trabajos
                     .filter(
                       (trabajo) =>
-                        trabajo.tipo_de_trabajo === 2 &&
+                        trabajo.tipo_de_trabajo === 1 &&
                         Object.values(trabajo)
                           .join(" ")
                           .toLowerCase()
-                          .includes(searchTerm.toLowerCase())
+                          .includes(searchTerm.toLowerCase()) // Filtrado por el término de búsqueda
                     )
-                    .sort((a, b) => a.num_trabajo - b.num_trabajo)
+                    .sort((a, b) => a.num_trabajo - b.num_trabajo) // Ordenar por el número de trabajo
                     .map((trabajo) => {
                       const cliente = clientes.find(
                         (cl) => cl.id === trabajo.cliente_id
-                      );
+                      ); // Buscar cliente
                       const estado = estados.find(
-                        (est) => est.id_estado === trabajo.estado
-                      );
+                        (est) =>
+                          est.id_estado_contable === trabajo.estado_contable
+                      ); // Buscar estado
                       const tipoTrabajo = tiposDeTrabajo.find(
                         (tipo) => tipo.id === trabajo.nombre_tipo_trabajo
-                      );
+                      ); // Buscar tipo de trabajo
 
                       return (
                         <tr key={trabajo.id_trabajo}>
@@ -441,12 +450,6 @@ const Amojonamientos = () => {
                               className="btn btn-warning p-1 m-0"
                             >
                               <i className="fas fa-edit"></i> Editar
-                            </button>
-                            <button
-                              onClick={() => handleDelete(trabajo.id_trabajo)}
-                              className="btn btn-danger p-1 m-0"
-                            >
-                              <i className="fas fa-trash-alt"></i> Eliminar
                             </button>
                           </td>
                           <td
@@ -487,36 +490,6 @@ const Amojonamientos = () => {
                           </td>
                           <td
                             className="bg-light text-dark"
-                            style={{ width: "150px" }}
-                          >
-                            {trabajo.localidad}
-                          </td>
-                          <td
-                            className="bg-light text-dark"
-                            style={{ width: "100px" }}
-                          >
-                            {trabajo.manzana}
-                          </td>
-                          <td
-                            className="bg-light text-dark"
-                            style={{ width: "100px" }}
-                          >
-                            {trabajo.solar}
-                          </td>
-                          <td
-                            className="bg-light text-dark"
-                            style={{ width: "100px" }}
-                          >
-                            {trabajo.padron}
-                          </td>
-                          <td
-                            className="bg-light text-dark"
-                            style={{ width: "150px" }}
-                          >
-                            {trabajo.departamento}
-                          </td>
-                          <td
-                            className="bg-light text-dark"
                             style={{ width: "250px" }}
                           >
                             {trabajo.telefono_cliente}
@@ -525,9 +498,53 @@ const Amojonamientos = () => {
                             className="bg-light text-dark"
                             style={{ width: "150px" }}
                           >
+                            {trabajo.moneda}
+                          </td>
+                          <td
+                            className="bg-light text-dark"
+                            style={{ width: "150px" }}
+                          >
+                            {trabajo.costo}
+                          </td>
+                          <td
+                            className="bg-light text-dark"
+                            style={{ width: "150px" }}
+                          >
+                            {trabajo.iva ? (
+                              <i
+                                className="fas fa-check"
+                                style={{ color: "green" }}
+                              ></i> // Tick verde
+                            ) : (
+                              <i
+                                className="fas fa-times"
+                                style={{ color: "red" }}
+                              ></i> // X roja
+                            )}
+                          </td>
+                          <td
+                            className="bg-light text-dark"
+                            style={{ width: "150px" }}
+                          >
+                            {trabajo.entrego}
+                          </td>
+                          <td
+                            className="bg-light text-dark"
+                            style={{ width: "150px" }}
+                          >
+                            {trabajo.deuda !== undefined
+                              ? trabajo.deuda
+                              : trabajo.costo}{" "}
+                            {/* Muestra deuda o costo si deuda es undefined */}
+                          </td>
+
+                          <td
+                            className="bg-light text-dark"
+                            style={{ width: "150px" }}
+                          >
                             {" "}
                             {estado
-                              ? estado.tipo_estado
+                              ? estado.tipo_estado_contable
                               : "Estado no encontrado"}
                           </td>
                         </tr>
@@ -537,7 +554,6 @@ const Amojonamientos = () => {
               </table>
             </div>
           )}
-          {/* Formulario de Edición */}
           {selectedTrabajo && (
             <div
               className="modal fade show"
@@ -546,113 +562,117 @@ const Amojonamientos = () => {
                 backgroundColor: "rgba(0, 0, 0, 0.5)",
               }}
             >
-              <div className="modal-dialog">
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title">Editar Trabajo</h5>
+              <div className="modal-dialog modal-lg">
+                <div className="modal-content rounded-3 shadow-lg">
+                  <div className="modal-header bg-primary text-white">
+                    <h5 className="modal-title">Editar Contabilidad</h5>
                     <button
                       type="button"
                       className="btn-close"
                       onClick={() => setSelectedTrabajo(null)}
                     ></button>
                   </div>
-                  <div className="modal-body">
+                  <div className="modal-body py-4">
                     <form onSubmit={handleSaveEdit}>
-                      <div className="mb-3">
-                        <label className="form-label">Nombre de trabajo</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={selectedTrabajo.nombre_trabajo}
-                          onChange={(e) =>
-                            setSelectedTrabajo({
-                              ...selectedTrabajo,
-                              nombre_trabajo: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div className="mb-3 row">
-                        <div className="col">
-                          <label className="form-label">Manzana</label>
+                      {/* Fila para Costo e IVA */}
+                      <div className="row">
+                        <div className="col-md-6 mb-4">
+                          <label className="form-label fw-bold">Costo</label>
                           <input
-                            type="text"
+                            type="number"
                             className="form-control"
-                            value={selectedTrabajo.manzana}
+                            value={selectedTrabajo.costo}
                             onChange={(e) =>
                               setSelectedTrabajo({
                                 ...selectedTrabajo,
-                                manzana: e.target.value,
+                                costo: e.target.value,
                               })
                             }
                           />
                         </div>
-                        <div className="col">
-                          <label className="form-label">Solar</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            value={selectedTrabajo.solar}
-                            onChange={(e) =>
-                              setSelectedTrabajo({
-                                ...selectedTrabajo,
-                                solar: e.target.value,
-                              })
-                            }
-                          />
-                        </div>
-                        <div className="col">
-                          <label className="form-label">Padron</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            value={selectedTrabajo.padron}
-                            onChange={(e) =>
-                              setSelectedTrabajo({
-                                ...selectedTrabajo,
-                                padron: e.target.value,
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
+                        <div className="row">
+                          {/* Campo IVA */}
+                          <div className="col-md-6 mb-4">
+                            <label className="form-label fw-bold">IVA</label>
+                            <div className="d-flex align-items-center">
+                              <input
+                                type="checkbox"
+                                checked={selectedTrabajo.iva}
+                                onChange={(e) => {
+                                  const isChecked = e.target.checked;
+                                  const updatedCosto = isChecked
+                                    ? selectedTrabajo.costo * 1.22
+                                    : selectedTrabajo.costo / 1.22;
+                                  setSelectedTrabajo({
+                                    ...selectedTrabajo,
+                                    iva: isChecked,
+                                    costo: updatedCosto.toFixed(2),
+                                  });
+                                }}
+                              />
+                              {selectedTrabajo.iva && (
+                                <small className="form-text text-muted ms-2">
+                                  IVA calculado: 22%
+                                </small>
+                              )}
+                            </div>
+                          </div>
 
-                      <div className="mb-3">
-                        <label className="form-label">Comentarios</label>
-                        <textarea
-                          className="form-control"
-                          value={selectedTrabajo.comentarios}
-                          onChange={(e) =>
-                            setSelectedTrabajo({
-                              ...selectedTrabajo,
-                              comentarios: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-
-                      <div className="mb-3">
-                        <label className="form-label">Estado de trabajo</label>
-                        <select
-                          className="form-control"
-                          value={selectedTrabajo.estado}
-                          onChange={(e) =>
-                            setSelectedTrabajo({
-                              ...selectedTrabajo,
-                              estado: e.target.value,
-                            })
-                          }
-                        >
-                          <option value="">Seleccionar estado</option>
-                          {estados.map((estado) => (
-                            <option
-                              key={estado.id_estado}
-                              value={estado.id_estado}
+                          <div className="row">
+                            <div className="col-md-6 mb-4">
+                              <label className="form-label fw-bold">
+                                Entrego
+                              </label>
+                              <input
+                                type="number"
+                                className="form-control"
+                                value={selectedTrabajo.entrego}
+                                onChange={(e) =>
+                                  setSelectedTrabajo({
+                                    ...selectedTrabajo,
+                                    entrego: parseFloat(e.target.value),
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className="col-md-6 mb-4">
+                              <label className="form-label fw-bold">
+                                Deuda
+                              </label>
+                              <input
+                                type="number"
+                                className="form-control"
+                                value={selectedTrabajo.deuda}
+                                readOnly
+                              />
+                            </div>
+                          </div>
+                          <div className="mb-3">
+                            <label className="form-label">
+                              Estado de trabajo
+                            </label>
+                            <select
+                              className="form-control"
+                              value={selectedTrabajo.estado_contable}
+                              onChange={(e) =>
+                                setSelectedTrabajo({
+                                  ...selectedTrabajo,
+                                  estado_contable: e.target.value,
+                                })
+                              }
                             >
-                              {estado.tipo_estado}
-                            </option>
-                          ))}
-                        </select>
+                              <option value="">Seleccionar estado</option>
+                              {estados.map((estado) => (
+                                <option
+                                  key={estado.id_estado_contable}
+                                  value={estado.id_estado_contable}
+                                >
+                                  {estado.tipo_estado_contable}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
                       </div>
 
                       <button type="submit" className="btn btn-success">
@@ -670,4 +690,4 @@ const Amojonamientos = () => {
   );
 };
 
-export default Amojonamientos;
+export default ContAmoj;

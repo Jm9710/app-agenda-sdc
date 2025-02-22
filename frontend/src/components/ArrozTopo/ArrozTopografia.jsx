@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import MenuTopo from "./MenuTopo";
 
-const ArrozTopo = () => {
+const Amojonamientos = () => {
   const [trabajos, setTrabajos] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10,8 +10,9 @@ const ArrozTopo = () => {
   const [expandedState, setExpandedState] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  const apiUrl =
-    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+
+  //const apiUrl = process.env.BACKEND_URL || 'http://127.0.0.1:3001';
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -57,11 +58,9 @@ const ArrozTopo = () => {
   };
 
   const estadoColores = {
-    2: "bg-danger text-white border-white",
-    3: "bg-warning text-dark",
-    4: "bg-info text-dark",
-    5: "bg-success text-white",
-    6: "bg-primary text-white",
+    1: "bg-danger text-white border-white",
+    2: "bg-warning text-dark",
+    3: "bg-success text-white",
   };
 
   const renderTrabajosPorEstado = (estadoId) =>
@@ -73,20 +72,16 @@ const ArrozTopo = () => {
             setExpandedState(expandedState === estadoId ? null : estadoId)
           }
         >
-          {estadoId === 2
+          {estadoId === 1
             ? "Por hacer"
-            : estadoId === 3
+            : estadoId === 2
             ? "En progreso"
-            : estadoId === 4
-            ? "Por cobrar"
-            : estadoId === 5
-            ? "Para facturar"
-            : "Facturado"}
+            : "Finalizado"}
         </button>
         {expandedState === estadoId && (
           <div className="mt-2 p-2">
             {trabajos
-              .filter((trabajo) => trabajo.estado_trabajo === estadoId)
+              .filter((trabajo) => trabajo.estado === estadoId)
               .sort((a, b) => b.num_trabajo - a.num_trabajo)
               .map((trabajo) => (
                 <p key={trabajo.id_trabajo}>
@@ -102,7 +97,7 @@ const ArrozTopo = () => {
     ) : (
       <td className={estadoColores[estadoId]}>
         {trabajos
-          .filter((trabajo) => trabajo.estado_trabajo === estadoId)
+          .filter((trabajo) => trabajo.estado === estadoId)
           .sort((a, b) => b.num_trabajo - a.num_trabajo)
           .map((trabajo) => (
             <p key={trabajo.id_trabajo}>
@@ -137,7 +132,7 @@ const ArrozTopo = () => {
             className="flex-grow-1 text-black text-center m-0"
             style={{ fontSize: "24px" }}
           >
-            Arroz Topografia - Progreso
+            Arroz topografia - Progreso
           </h1>
           <button
             className="me-3"
@@ -147,18 +142,16 @@ const ArrozTopo = () => {
             <i className="fas fa-bars" style={{ fontSize: "30px" }}></i>
           </button>
         </div>
-        {isMenuOpen && <MenuTopo />}
+        {isMenuOpen && <MenuTopo/>}
         <div
           className="overflow-auto"
           style={{ maxHeight: "75vh", paddingRight: "10px" }}
         >
           {isMobile ? (
             <div>
+              {renderTrabajosPorEstado(1)}
               {renderTrabajosPorEstado(2)}
               {renderTrabajosPorEstado(3)}
-              {renderTrabajosPorEstado(4)}
-              {renderTrabajosPorEstado(5)}
-              {renderTrabajosPorEstado(6)}
             </div>
           ) : (
             <table
@@ -171,18 +164,14 @@ const ArrozTopo = () => {
                 <tr>
                   <th className="bg-light text-dark">Por hacer</th>
                   <th className="bg-light text-dark">En progreso</th>
-                  <th className="bg-light text-dark">Por cobrar</th>
-                  <th className="bg-light text-dark">Para facturar</th>
-                  <th className="bg-light text-dark">Facturado</th>
+                  <th className="bg-light text-dark">Finalizado</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
+                  {renderTrabajosPorEstado(1)}
                   {renderTrabajosPorEstado(2)}
                   {renderTrabajosPorEstado(3)}
-                  {renderTrabajosPorEstado(4)}
-                  {renderTrabajosPorEstado(5)}
-                  {renderTrabajosPorEstado(6)}
                 </tr>
               </tbody>
             </table>
@@ -193,4 +182,4 @@ const ArrozTopo = () => {
   );
 };
 
-export default ArrozTopo;
+export default Amojonamientos;

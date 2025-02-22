@@ -9,8 +9,9 @@ const Amojonamientos = () => {
   const [clientes, setClientes] = useState([]);
   const [estados, setEstados] = useState([]);
 
-  const apiUrl =
-    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
+  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+
+  //const apiUrl = process.env.BACKEND_URL || 'http://127.0.0.1:3001';
 
   // Estado para controlar la visibilidad del menú
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -97,7 +98,7 @@ const Amojonamientos = () => {
               fontSize: "24px",
             }}
           >
-            Amojonamientos - Resumen de datos
+            Amojs y DJCU - Resumen de datos
           </h1>
           <button
             className="me-3"
@@ -149,6 +150,9 @@ const Amojonamientos = () => {
                     Nombre de cliente
                   </th>
                   <th className="bg-light text-dark" style={{ width: "100px" }}>
+                    Moneda
+                  </th>
+                  <th className="bg-light text-dark" style={{ width: "100px" }}>
                     Costo
                   </th>
                   <th className="bg-light text-dark" style={{ width: "300px" }}>
@@ -167,10 +171,10 @@ const Amojonamientos = () => {
                       (est) => est.id_estado === b.estado_trabajo
                     )?.tipo_estado;
 
-                    // Prioriza los estados que no son "Cobrado"
-                    if (estadoA === "Cobrado" && estadoB !== "Cobrado")
+                    // Prioriza los estados que no son "Finalizado"
+                    if (estadoA === "Finalizado" && estadoB !== "Finalizado")
                       return 1;
-                    if (estadoA !== "Cobrado" && estadoB === "Cobrado")
+                    if (estadoA !== "Finalizado" && estadoB === "Finalizado")
                       return -1;
 
                     // Si ambos son iguales, ordena por número de trabajo
@@ -181,7 +185,7 @@ const Amojonamientos = () => {
                       (cl) => cl.id === trabajo.cliente_id
                     );
                     const estado = estados.find(
-                      (est) => est.id_estado === trabajo.estado_trabajo
+                      (est) => est.id_estado === trabajo.estado
                     );
 
                     return (
@@ -205,6 +209,12 @@ const Amojonamientos = () => {
                           {cliente
                             ? cliente.nombre + " " + cliente.apellido
                             : "Cliente no encontrado"}
+                        </td>
+                        <td
+                          className="bg-light text-dark"
+                          style={{ width: "100px" }}
+                        >
+                          {trabajo.moneda}
                         </td>
                         <td
                           className="bg-light text-dark"

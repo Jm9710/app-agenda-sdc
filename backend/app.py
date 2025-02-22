@@ -6,8 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from datetime import datetime
-from admin import setup_admin
-from models import db, Usuario, Cliente, Estado, TipoTrabajo, Trabajo
+from backend.admin import setup_admin
+from backend.models import db, Usuario, Cliente, Estado, Estado_Contable, TipoTrabajo, Trabajo
 from werkzeug.security import check_password_hash
 
 # Inicializa Flask
@@ -20,8 +20,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://bdsdcagenda_user:yUzUdvy0A
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 
-# Inicializa extensiones
 db.init_app(app)
+# Inicializa extensiones
 migrate = Migrate(app, db)
 setup_admin(app)
 jwt = JWTManager(app)
@@ -184,6 +184,31 @@ def actualizar_estado(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"Error": str(e)}), 500
+    
+@app.route('/api/estados_contables', methods=['GET'])
+def obtener_estados_contables():
+    estados_contables = Estado_Contable.query.all()
+    estados_contables_serializados = [estado.serialize() for estado in estados_contables]
+    return jsonify(estados_contables_serializados), 200
+
+@app.route('/api/estados_contables/<int:id>', methods=['PUT'])
+def actualizar_estado_contable(id):
+    estado_contable = Estado_Contable.query.get(id)
+    if not estado_contable:
+        return jsonify({"Error": "Estado contable no encontrado"}), 404
+
+    data = request.get_json()
+
+    if not data or not data.get('nombre'):
+        return jsonify({"Error": "Faltan datos requeridos"}), 400
+
+    try:
+        estado_contable.nombre = data['nombre']
+        db.session.commit()
+        return jsonify(estado_contable.serialize()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"Error": str(e)}), 500
 
 @app.route('/api/tipo_de_trabajos', methods=['GET'])
 def obtener_tipos_de_trabajo():
@@ -224,6 +249,10 @@ def crear_trabajo():
         estado_por_hacer = Estado.query.filter_by(tipo_estado= "Por Hacer").first()
         if not estado_por_hacer:
             return jsonify ({"error": "estado 'por hacer' no encontrado en la BD"})
+        
+        estado_por_cobrar = Estado_Contable.query.filter_by(tipo_estado_contable= "Por Cobrar").first()
+        if not estado_por_cobrar:
+            return jsonify ({"error": "estado 'por cobrar' no encontrado en la BD"})
 
 
         nuevo_trabajo = Trabajo(
@@ -241,8 +270,11 @@ def crear_trabajo():
             moneda=data.get('moneda'),
             costo=data.get('costo'),
             iva=data.get('iva', False),
+            entrego=data.get('entrego'),
             comentarios=data.get('comentarios'),
-            estado_trabajo=estado_por_hacer.id_estado
+            estado=estado_por_hacer.id_estado,
+            estado_contable=estado_por_cobrar.id_estado_contable
+            
         )
 
         db.session.add(nuevo_trabajo)
@@ -269,7 +301,7 @@ def actualizar_trabajo(id_trabajo):
     if not any(
         key in data for key in [
             'nombre_trabajo', 'manzana', 'solar', 'padron', 'departamento',
-            'localidad', 'costo', 'iva', 'comentarios', 'estado_trabajo'
+            'localidad', 'costo', 'iva', 'comentarios', 'estado', 'estado_contable'
         ]
     ):
         return jsonify({"Error": "Faltan datos requeridos"}), 400
@@ -285,10 +317,16 @@ def actualizar_trabajo(id_trabajo):
             setattr(trabajo, key, data[key])
 
     # Verificar si el estado del trabajo es válido
-    if 'estado_trabajo' in data:
-        estado_existente = Estado.query.get(data['estado_trabajo'])
+    if 'estado' in data:
+        estado_existente = Estado.query.get(data['estado'])
         if not estado_existente:
             return jsonify({"Error": "Estado no válido"}), 400
+    
+    # Verificar si el estado contable del trabajo es válido
+    if 'estado_contable' in data:
+        estado_contable_existente = Estado_Contable.query.get(data['estado_contable'])
+        if not estado_contable_existente:
+            return jsonify({"Error": "Estado contable no válido"}), 400
 
     # Guardar cambios en la base de datos
     try:

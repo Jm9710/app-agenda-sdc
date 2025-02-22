@@ -5,6 +5,8 @@ import ModalCliente from "./ModalCliente";
 const Clientes = () => {
   const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
 
+  //const apiUrl = process.env.BACKEND_URL || 'http://127.0.0.1:3001';
+
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

@@ -17,7 +17,14 @@ import ResumenTopo from "./components/ArrozTopo/ResumenTopo"
 import EdicionAgrTr from "./components/AgrTr/EdicionAgrTr"
 import ResumenAgrTr from "./components/AgrTr/ResumenAgrTr"
 import Clientes from "./components/Clientes";
-import Contabilidad from "./components/Contabilidad/contabilidad";
+import MenuCont from "./components/Contabilidad/MenuCont";
+import ContAmojs from "./components/Contabilidad/ContAmojs";
+import ContAgrTram from "./components/Contabilidad/ContAgrTram";
+import ContArrozTopo from "./components/Contabilidad/ContArrTopo";
+import HomeProgreso from "./components/Progreso/HomeProgreso";
+import ProAmojsDJCU from "./components/Progreso/ProAmojsDJCU";
+import ProAgrTram from "./components/Progreso/ProAgrTram";
+import ProArrTopo from "./components/Progreso/ProArrTopo";
 
 
 const App = () => {
@@ -71,8 +78,26 @@ const App = () => {
       case "/clientes":
         document.title = "Clientes - SDC Agenda";
         break;
-      case "/contabilidad":
-        document.title = "Contabilidad - SDC Agenda";
+      case "/menu-contabilidad":
+        document.title = "Menu Contabilidad - SDC Agenda";
+        break;
+      case "/contabilidad-Amojs":
+        document.title = "Contabilidad Amojs y DJCU - SDC Agenda";
+        break;
+      case "/contabilidad-ArrozTopo":
+        document.title = "Contabilidad Arroz Topografia - SDC Agenda";
+        break;
+      case "/contabilidad-tramites":
+        document.title = "Contabilidad Agrimensura Tramites - SDC Agenda";
+        break;
+      case "/home-progreso":
+        document.title = "Progreso General - SDC Agenda";
+      case "/progreso-amojs":
+        document.title = "Progreso Amojs y DJCU - SDC Agenda";
+      case "/progreso-arroz-topo":
+        document.title = "Progreso Arroz Topografia - SDC Agenda";
+      case "/progreso-agrimensura-tramites":
+        document.title = "Progreso Agrimensura Tramites - SDC Agenda";
       default:
         document.title = "SDC Agenda";
     }
@@ -95,7 +120,14 @@ const App = () => {
       <Route path="/edicion-AgrTr" element={<EdicionAgrTr />} />
       <Route path="/resumen-AgrTr" element={<ResumenAgrTr />} />
       <Route path="/clientes" element={<Clientes />} />
-      <Route path="/contabilidad" element={<Contabilidad />} />
+      <Route path="/menu-contabilidad" element={<MenuCont />} />
+      <Route path="/contabilidad-Amojs" element={<ContAmojs />} />
+      <Route path="/contabilidad-ArrozTopo" element={<ContArrozTopo />} />
+      <Route path="/contabilidad-tramites" element={<ContAgrTram />} />
+      <Route path="/home-progreso" element={<HomeProgreso />} />
+      <Route path="/progreso-amojs" element={<ProAmojsDJCU />} />
+      <Route path="/progreso-arroz-topo" element={<ProArrTopo />} />
+      <Route path="/progreso-agrimensura-tramites" element={<ProAgrTram />} />
     </Routes>
   );
 };

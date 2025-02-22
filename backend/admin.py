@@ -2,7 +2,7 @@ import os
 from flask import Flask, request, redirect, make_response
 from flask_admin import Admin, AdminIndexView, expose
 from flask_admin.contrib.sqla import ModelView
-from models import db, Usuario, Estado, TipoTrabajo, Trabajo, Cliente
+from backend.models import db, Usuario, Estado, TipoTrabajo, Trabajo, Cliente
 
 # Clase personalizada para proteger el índice de Flask-Admin
 class MyAdminIndexView(AdminIndexView):
