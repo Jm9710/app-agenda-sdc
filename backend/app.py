@@ -6,8 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from datetime import datetime
-from backend.admin import setup_admin
-from backend.models import db, Usuario, Cliente, Estado, Estado_Contable, TipoTrabajo, Trabajo
+from admin import setup_admin
+from models import db, Usuario, Cliente, Estado, Estado_Contable, TipoTrabajo, Trabajo
 from werkzeug.security import check_password_hash
 
 # Inicializa Flask
