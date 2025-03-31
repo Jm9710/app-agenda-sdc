@@ -13,8 +13,10 @@ const Amojonamientos = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [zoom, setZoom] = useState(1);
   const [maxHeight, setMaxHeight] = useState("600px");
+  const [searchField, setSearchField] = useState("nombre_trabajo");
 
-  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+  const apiUrl =
+    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
 
   //const apiUrl = process.env.BACKEND_URL || "http://127.0.0.1:3001";
 
@@ -194,6 +196,35 @@ const Amojonamientos = () => {
     fetchEstados();
   }, []);
 
+  const handleSearch = (trabajo) => {
+    const cliente = clientes.find((cl) => cl.id === trabajo.cliente_id);
+    const clienteNombreCompleto = cliente
+      ? `${cliente.nombre} ${cliente.apellido}`.toLowerCase()
+      : "";
+      if (trabajo.tipo_de_trabajo !== 3) return false;
+    switch (searchField) {
+      case "num_trabajo":
+        return trabajo.num_trabajo.toString().includes(searchTerm);
+      case "nombre":
+        return clienteNombreCompleto.includes(searchTerm.toLowerCase());
+      case "departamento":
+        return trabajo.departamento
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+      case "localidad":
+        return trabajo.localidad
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+      case "estado":
+        const estado = estados.find((est) => est.id_estado === trabajo.estado);
+        return estado?.tipo_estado
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+      default:
+        return true;
+    }
+  };
+
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
       <div
@@ -267,6 +298,20 @@ const Amojonamientos = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               aria-label="Search..."
             />
+
+            <select
+              value={searchField}
+              onChange={(e) => setSearchField(e.target.value)}
+              className="form-select"
+              style={{ width: "200px" }}
+            >
+              <option value="num_trabajo">Número de trabajo</option>
+              <option value="nombre">Nombre Cliente</option>
+              <option value="departamento">Departamento</option>
+              <option value="localidad">Localidad</option>
+              <option value="estado">Estado</option>
+            </select>
+
             <button
               onClick={() => setZoom((prev) => prev + 0.1)}
               style={{ fontSize: "18px" }}
@@ -289,7 +334,7 @@ const Amojonamientos = () => {
             </button>
           </div>
 
-          {isMenuOpen && <MenuAgrTr/>}
+          {isMenuOpen && <MenuAgrTr />}
 
           {/* Tabla con contenido */}
           {loading ? (
@@ -406,14 +451,7 @@ const Amojonamientos = () => {
                 </thead>
                 <tbody>
                   {trabajos
-                    .filter(
-                      (trabajo) =>
-                        trabajo.tipo_de_trabajo === 3 &&
-                        Object.values(trabajo)
-                          .join(" ")
-                          .toLowerCase()
-                          .includes(searchTerm.toLowerCase())
-                    )
+                    .filter(handleSearch)
                     .sort((a, b) => a.num_trabajo - b.num_trabajo)
                     .map((trabajo) => {
                       const cliente = clientes.find(
@@ -615,6 +653,58 @@ const Amojonamientos = () => {
                             }
                           />
                         </div>
+                        <div className="mb-3 row">
+                        <div className="col">
+                          <label className="form-label">Departamento</label>
+                          <select
+                            className="form-select"
+                            value={selectedTrabajo.departamento}
+                            onChange={(e) =>
+                              setSelectedTrabajo({
+                                ...selectedTrabajo,
+                                departamento: e.target.value,
+                              })
+                            }
+                          >
+                            <option value={"Rocha"}>Rocha</option>
+                            <option value={"Artigas"}>Artigas</option>
+                            <option value={"Canelones"}>Canelones</option>
+                            <option value={"Cerro Largo"}>Cerro Largo</option>
+                            <option value={"Colonia"}>Colonia</option>
+                            <option value={"Durazno"}>Durazno</option>
+                            <option value={"Flores"}>Flores</option>
+                            <option value={"Florida"}>Florida</option>
+                            <option value={"Lavalleja"}>Lavalleja</option>
+                            <option value={"Maldonado"}>Maldonado</option>
+                            <option value={"Montevideo"}>Montevideo</option>
+                            <option value={"Paysandu"}>Paysandu</option>
+                            <option value={"Rio negro"}>Rio Negro</option>
+                            <option value={"Rivera"}>Rivera</option>
+                            <option value={"Salto"}>Salto</option>
+                            <option value={"San Jose"}>San Jose</option>
+                            <option value={"Soriano"}>Soriano</option>
+                            <option value={"Tacuarembo"}>Tacuarembo</option>
+                            <option value={"Treinta y Tres"}>
+                              Treinta y Tres
+                            </option>
+                          </select>
+                        </div>
+                        <div className="col">
+                          <label className="form-label">Localidad</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={selectedTrabajo.localidad}
+                            onChange={(e) =>
+                              setSelectedTrabajo({
+                                ...selectedTrabajo,
+                                localidad: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+
                       </div>
 
                       <div className="mb-3">

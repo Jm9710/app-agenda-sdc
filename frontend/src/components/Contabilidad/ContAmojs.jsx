@@ -11,10 +11,12 @@ const ContAmoj = () => {
   const [selectedTrabajo, setSelectedTrabajo] = useState(null); // Para almacenar el trabajo que se edita
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchField, setSearchField] = useState("nombre_trabajo");
   const [zoom, setZoom] = useState(1);
   const [maxHeight, setMaxHeight] = useState("600px");
 
-  const apiUrl = process.env.BACKEND_URL || 'https://app-agenda-sdc-backend.onrender.com';
+  const apiUrl =
+    process.env.BACKEND_URL || "https://app-agenda-sdc-backend.onrender.com";
 
   //const apiUrl = process.env.BACKEND_URL || 'http://127.0.0.1:3001';
 
@@ -193,6 +195,24 @@ const ContAmoj = () => {
     fetchEstados();
   }, []);
 
+  const handleSearch = (trabajo) => {
+    const cliente = clientes.find((cl) => cl.id === trabajo.cliente_id);
+    const clienteNombreCompleto = cliente
+      ? `${cliente.nombre} ${cliente.apellido}`.toLowerCase()
+      : "";
+
+    if (trabajo.tipo_de_trabajo !== 1) return false;
+
+    switch (searchField) {
+      case "num_trabajo":
+        return trabajo.num_trabajo.toString().includes(searchTerm);
+      case "nombre":
+        return clienteNombreCompleto.includes(searchTerm.toLowerCase());
+      default:
+        return true;
+    }
+  };
+
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-success">
       <div
@@ -277,6 +297,15 @@ const ContAmoj = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               aria-label="Search..."
             />
+            <select
+              value={searchField}
+              onChange={(e) => setSearchField(e.target.value)}
+              className="form-select"
+              style={{ width: "200px" }}
+            >
+              <option value="num_trabajo">Número de trabajo</option>
+              <option value="nombre">Nombre Cliente</option>
+            </select>
             <button
               onClick={() => setZoom((prev) => prev + 0.1)}
               style={{ fontSize: "18px" }}
@@ -414,14 +443,7 @@ const ContAmoj = () => {
                 </thead>
                 <tbody>
                   {trabajos
-                    .filter(
-                      (trabajo) =>
-                        trabajo.tipo_de_trabajo === 1 &&
-                        Object.values(trabajo)
-                          .join(" ")
-                          .toLowerCase()
-                          .includes(searchTerm.toLowerCase()) // Filtrado por el término de búsqueda
-                    )
+                    .filter(handleSearch)
                     .sort((a, b) => a.num_trabajo - b.num_trabajo) // Ordenar por el número de trabajo
                     .map((trabajo) => {
                       const cliente = clientes.find(
